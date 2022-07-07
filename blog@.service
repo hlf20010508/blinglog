@@ -3,10 +3,12 @@ Description=Blog
 After=network.target
 
 [Service]
-ExecStart=/home/ubuntu/.local/bin/pipenv run python3 wsgi.py
+ExecStart=/home/ubuntu/.pyenv/shims/pipenv run python3 wsgi.py
 Restart=always
-WorkingDirectory=/home/ubuntu/bluelog
+RestartSec=10
+StartLimitInterval=0
 User=%i
+WorkingDirectory=/home/ubuntu/bluelog
 
 [Install]
 WantedBy=default.target
