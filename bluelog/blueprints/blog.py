@@ -13,6 +13,7 @@ from bluelog.extensions import db
 from bluelog.forms import CommentForm, AdminCommentForm
 from bluelog.models import Post, Category, Comment
 from bluelog.utils import redirect_back
+import bluelog.OSS_minio as oss
 
 blog_bp = Blueprint('blog', __name__)
 
@@ -23,6 +24,18 @@ def index():
     per_page = current_app.config['BLUELOG_POST_PER_PAGE']
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
     posts = pagination.items
+
+    post_with_img=Post.query.filter(Post.img_name).all()
+    img_list=[p.img_name for p in post_with_img]
+    img_name=', '.join(img_list)
+    img_list=img_name.split(', ')
+    client=oss.Client()
+    img_all=client.list()
+    
+    for i in img_all:
+        if i not in img_list:
+            client.remove(i)
+
     return render_template('blog/index.html', pagination=pagination, posts=posts)
 
 

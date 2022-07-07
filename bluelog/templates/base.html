@@ -11,6 +11,7 @@
               href="{{ url_for('static', filename='css/%s.min.css' % request.cookies.get('theme', 'perfect_blue')) }}"
               type="text/css">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/ckeditor-contents.css') }}" type="text/css">
     {% endblock head %}
 </head>
 <body>
@@ -82,9 +83,9 @@
     {% block footer %}
         <footer>
             <p class="float-left">
-                <small> &copy; 2018 <a href="http://greyli.com" title="Written by Grey Li">Grey Li</a> -
-                    <a href="https://github.com/greyli/bluelog" title="Fork me on GitHub">GitHub</a> -
-                    <a href="http://helloflask.com" title="A HelloFlask project">HelloFlask</a>
+                <small> &copy; 2022 <a href="http://124.223.224.49:5000" title="Written by L-ING">L-ING</a> -
+                    <a href="https://www.zhihu.com/people/huang-ling-feng-7-16" title="Fork me on Zhihu" target="_blank">Zhihu</a> -
+                    <a href="http://helloflask.com" title="A HelloFlask project" target="_blank">HelloFlask</a>
                 </small>
             </p>
             <p class="float-right">

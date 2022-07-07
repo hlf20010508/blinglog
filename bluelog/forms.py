@@ -30,7 +30,7 @@ class SettingForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(1, 60)])
+    title = StringField('Title', validators=[DataRequired(), Length(1, 200)])
     category = SelectField('Category', coerce=int, default=1)
     body = CKEditorField('Body', validators=[DataRequired()])
     submit = SubmitField()

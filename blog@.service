@@ -1,0 +1,12 @@
+[Unit]
+Description=Blog
+After=network.target
+
+[Service]
+ExecStart=/home/ubuntu/.local/bin/pipenv run python3 wsgi.py
+Restart=always
+WorkingDirectory=/home/ubuntu/bluelog
+User=%i
+
+[Install]
+WantedBy=default.target

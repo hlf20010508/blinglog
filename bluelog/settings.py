@@ -7,8 +7,10 @@
 """
 import os
 import sys
+import config as myconfig
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+config = myconfig.load()
 
 # SQLite URI compatible
 WIN = sys.platform.startswith('win')
@@ -44,12 +46,24 @@ class BaseConfig(object):
     BLUELOG_THEMES = {'perfect_blue': 'Perfect Blue', 'black_swan': 'Black Swan'}
     BLUELOG_SLOW_QUERY_THRESHOLD = 1
 
-    BLUELOG_UPLOAD_PATH = os.path.join(basedir, 'uploads')
+    # BLUELOG_UPLOAD_PATH = os.path.join(basedir, 'uploads')
+    protocol = 'https' if config['secure_minio'] else 'http'
+    port = config['host_minio'].split(':')[1]
+    host = '%s://127.0.0.1:%s/%s' % (protocol, port, config['bucket']
+                                     ) if config['local_minio'] else protocol+'://'+config['host_minio']+'/'+config['bucket']
+    BLUELOG_MINIO_PATH = host
     BLUELOG_ALLOWED_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
 
+port = config['host_mysql'].split(':')[1]
+mysql_host = config['username_mysql']+':'+config['password_mysql']+'@'+'127.0.0.1:'+port+'/' + \
+    config['database'] if config['local_mysql'] else config['username_mysql'] + \
+    ':'+config['password_mysql']+'@'+config['host_mysql']+'/'+config['database']
+
+
 class DevelopmentConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data-dev.db')
+    # SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data-dev.db')
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://"+mysql_host
 
 
 class TestingConfig(BaseConfig):
@@ -59,7 +73,8 @@ class TestingConfig(BaseConfig):
 
 
 class ProductionConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
+    # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://"+mysql_host
 
 
 config = {

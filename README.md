@@ -1,46 +1,25 @@
-# Bluelog
-
-*A blue blog.*
-
-> Example application for *[Python Web Development with Flask](https://helloflask.com/en/book/1)* (《[Flask Web 开发实战](https://helloflask.com/book/1)》).
-
-Demo: http://bluelog.helloflask.com
-
-![Screenshot](https://helloflask.com/screenshots/bluelog.png)
-
-## Installation
-
-clone:
+安装pipenv
 ```
-$ git clone https://github.com/greyli/bluelog.git
-$ cd bluelog
+pip3 install pipenv
 ```
-create & activate virtual env then install dependency:
-
-with venv/virtualenv + pip:
+若没有增加环境变量，则执行
 ```
-$ python -m venv env  # use `virtualenv env` for Python2, use `python3 ...` for Python3 on Linux & macOS
-$ source env/bin/activate  # use `env\Scripts\activate` on Windows
-$ pip install -r requirements.txt
+echo "export PATH=\"/home/ubuntu/.local/bin:$PATH\"" >> ~/.bashrc
+source ~/.bashrc
 ```
-or with Pipenv:
+安装环境
 ```
-$ pipenv install --dev
-$ pipenv shell
+pipenv install
 ```
-generate fake data then run:
+复制service文件
 ```
-$ flask forge
-$ flask run
-* Running on http://127.0.0.1:5000/
+sudo cp blog@.service /usr/lib/systemd/system
 ```
-
-Test account:
-
-* username: `admin`
-* password: `helloflask`
-
-## License
-
-This project is licensed under the MIT License (see the
-[LICENSE](LICENSE) file for details).
+开启服务
+```
+sudo systemctl start blog@ubuntu
+```
+开机自启
+```
+sudo systemctl enable blog@ubuntu
+```

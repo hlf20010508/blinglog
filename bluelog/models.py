@@ -11,6 +11,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from bluelog.extensions import db
+#from extensions import db
 
 
 class Admin(db.Model, UserMixin):
@@ -32,9 +33,8 @@ class Admin(db.Model, UserMixin):
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)
-
     posts = db.relationship('Post', back_populates='category')
-
+    
     def delete(self):
         default_category = Category.query.get(1)
         posts = self.posts[:]
@@ -46,12 +46,12 @@ class Category(db.Model):
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(60))
+    title = db.Column(db.String(200))
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     can_comment = db.Column(db.Boolean, default=True)
-
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    img_name = db.Column(db.Text)
 
     category = db.relationship('Category', back_populates='posts')
     comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')

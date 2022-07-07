@@ -6,8 +6,8 @@
     :license: MIT, see LICENSE for more details.
 """
 import os
-
-from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, send_from_directory
+from datetime import datetime
+from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint#, send_from_directory
 from flask_login import login_required, current_user
 from flask_ckeditor import upload_success, upload_fail
 
@@ -15,9 +15,9 @@ from bluelog.extensions import db
 from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm
 from bluelog.models import Post, Category, Comment, Link
 from bluelog.utils import redirect_back, allowed_file
+import bluelog.OSS_minio as oss
 
 admin_bp = Blueprint('admin', __name__)
-
 
 @admin_bp.route('/settings', methods=['GET', 'POST'])
 @login_required
@@ -47,6 +47,20 @@ def manage_post():
     posts = pagination.items
     return render_template('admin/manage_post.html', page=page, pagination=pagination, posts=posts)
 
+def get_img_name(body):
+    img_list=[]
+    if current_app.config['BLUELOG_MINIO_PATH'] in body:
+        from bs4 import BeautifulSoup as BSHTML
+        htmlText = '<html>'+body+'</html>'
+        soup = BSHTML(htmlText)
+        images = soup.findAll('img')
+        for image in images:
+            if current_app.config['BLUELOG_MINIO_PATH'] in image['src']:
+                img_list.append(image['src'].split('/')[-1])
+    if len(img_list)>0:
+        return ', '.join(img_list)
+    else:
+        return None
 
 @admin_bp.route('/post/new', methods=['GET', 'POST'])
 @login_required
@@ -56,7 +70,8 @@ def new_post():
         title = form.title.data
         body = form.body.data
         category = Category.query.get(form.category.data)
-        post = Post(title=title, body=body, category=category)
+        img_name = get_img_name(body)
+        post = Post(title=title, body=body, category=category, img_name=img_name)
         # same with:
         # category_id = form.category.data
         # post = Post(title=title, body=body, category_id=category_id)
@@ -76,6 +91,7 @@ def edit_post(post_id):
         post.title = form.title.data
         post.body = form.body.data
         post.category = Category.query.get(form.category.data)
+        post.img_name = get_img_name(post.body)
         db.session.commit()
         flash('Post updated.', 'success')
         return redirect(url_for('blog.show_post', post_id=post.id))
@@ -89,9 +105,14 @@ def edit_post(post_id):
 @login_required
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
+    img_name=post.img_name
     db.session.delete(post)
     db.session.commit()
     flash('Post deleted.', 'success')
+    if img_name != None:
+        img_list=img_name.split(', ')
+        for img in img_list:
+            oss.Client().remove(img)
     return redirect_back()
 
 
@@ -244,16 +265,13 @@ def delete_link(link_id):
     return redirect(url_for('.manage_link'))
 
 
-@admin_bp.route('/uploads/<path:filename>')
-def get_image(filename):
-    return send_from_directory(current_app.config['BLUELOG_UPLOAD_PATH'], filename)
-
-
 @admin_bp.route('/upload', methods=['POST'])
 def upload_image():
     f = request.files.get('upload')
     if not allowed_file(f.filename):
         return upload_fail('Image only!')
-    f.save(os.path.join(current_app.config['BLUELOG_UPLOAD_PATH'], f.filename))
-    url = url_for('.get_image', filename=f.filename)
+    now = datetime.now()  # 获得当前时间
+    timestr = now.strftime("%Y_%m_%d_%H_%M_%S")
+    f.filename=timestr+'.'+f.filename.split('.')[-1]
+    url=oss.Client().upload(f.filename, f)
     return upload_success(url, f.filename)

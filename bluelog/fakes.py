@@ -18,18 +18,18 @@ fake = Faker()
 
 def fake_admin():
     admin = Admin(
-        username='admin',
-        blog_title='Bluelog',
-        blog_sub_title="No, I'm the real thing.",
-        name='Mima Kirigoe',
-        about='Um, l, Mima Kirigoe, had a fun time as a member of CHAM...'
+        username='hlf',
+        blog_title="L-ING's Blog",
+        blog_sub_title="Welcome to my world!",
+        name='Lingfeng Huang',
+        about='Have fun here~'
     )
-    admin.set_password('helloflask')
+    admin.set_password('1486')
     db.session.add(admin)
     db.session.commit()
 
 
-def fake_categories(count=10):
+def fake_categories(count=1):
     category = Category(name='Default')
     db.session.add(category)
 
@@ -42,7 +42,7 @@ def fake_categories(count=10):
             db.session.rollback()
 
 
-def fake_posts(count=50):
+def fake_posts(count=1):
     for i in range(count):
         post = Post(
             title=fake.sentence(),
@@ -55,7 +55,7 @@ def fake_posts(count=50):
     db.session.commit()
 
 
-def fake_comments(count=500):
+def fake_comments(count=1):
     for i in range(count):
         comment = Comment(
             author=fake.name(),
@@ -84,9 +84,9 @@ def fake_comments(count=500):
 
         # from admin
         comment = Comment(
-            author='Mima Kirigoe',
-            email='mima@example.com',
-            site='example.com',
+            author='Lingfeng Huang',
+            email='hlf01@icloud.com',
+            site='blog.ngrok.hlf01.xyz:8082',
             body=fake.sentence(),
             timestamp=fake.date_time_this_year(),
             from_admin=True,
