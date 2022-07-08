@@ -22,12 +22,15 @@
     {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
     {% endblock %}
     <script>
-        $(function () {
+        $(() => {
             let date = new Date()
             let year = date.getFullYear()
             $('.year').text(year)
-            // $('.indexLink').attr('href', location.protocol + '//' + document.domain + ':' + location.port)
-        });
+            let host = location.protocol + '//' + document.domain + ':' + location.port
+            if (host != 'http://124.223.224.49:5000') {
+                $('.indexLink').attr('target', '_blank')
+            }
+        })
     </script>
 </head>
 
@@ -98,7 +101,8 @@
         {% block footer %}
         <footer>
             <p class="float-left">
-                <small> &copy; <span class="year"></span> <a class="indexLink" href="http://124.223.224.49:5000">L-ING</a> -
+                <small> &copy; <span class="year"></span> <a class="indexLink"
+                        href="http://124.223.224.49:5000">L-ING</a> -
                     <a href="https://github.com/hlf20010508" target="_blank">Github</a> -
                     <a href="https://gitee.com/hlf01" target="_blank">Gitee</a> -
                     <a href="https://www.zhihu.com/people/huang-ling-feng-7-16" target="_blank">Zhihu</a> -
