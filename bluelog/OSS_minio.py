@@ -1,3 +1,8 @@
+# :project: bluelog
+# :author: L-ING
+# :copyright: (C) 2022 L-ING <hlf01@icloud.com>
+# :license: MIT, see LICENSE for more details.
+
 from minio import Minio
 from minio.error import S3Error
 import config as myconfig

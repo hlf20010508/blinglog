@@ -31,3 +31,4 @@ sudo systemctl stop blog@USERNAME
 
 # 取消开机自启
 sudo systemctl disable blog@USERNAME
+```
