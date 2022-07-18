@@ -1,3 +1,18 @@
+# bluelog
+> A blog engine built with Flask.
+
+## 声明
+- 本项目基于greyli的blulog
+
+## 新功能
+- 使用minio作为对象存储
+- 使用mysql作为数据库
+- 自动清理无用图片
+- 升级富文本插件
+- 更改首页底部页码导航
+- 自动更新版权年份
+
+## 安装
 ```bash
 # 安装pipenv
 pip3 install pipenv
