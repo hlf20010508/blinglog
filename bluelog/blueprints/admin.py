@@ -49,14 +49,12 @@ def manage_post():
 
 def get_img_name(body):
     img_list=[]
-    if current_app.config['BLUELOG_MINIO_PATH'] in body:
-        from bs4 import BeautifulSoup as BSHTML
-        htmlText = '<html>'+body+'</html>'
-        soup = BSHTML(htmlText)
-        images = soup.findAll('img')
-        for image in images:
-            if current_app.config['BLUELOG_MINIO_PATH'] in image['src']:
-                img_list.append(image['src'].split('/')[-1])
+    from bs4 import BeautifulSoup as BSHTML
+    htmlText = '<html>'+body+'</html>'
+    soup = BSHTML(htmlText)
+    images = soup.findAll('img')
+    for image in images:
+        img_list.append(image['src'].split('/')[-1])
     if len(img_list)>0:
         return ', '.join(img_list)
     else:

@@ -25,11 +25,6 @@ def index():
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
     posts = pagination.items
 
-    return render_template('blog/index.html', pagination=pagination, posts=posts)
-
-
-@blog_bp.route('/clear_image_cache')
-def clear_image_cache():
     post_with_img=Post.query.filter(Post.img_name).all()
     img_list=[p.img_name for p in post_with_img]
     img_name=', '.join(img_list)
@@ -41,7 +36,23 @@ def clear_image_cache():
         if i not in img_list:
             client.remove(i)
 
-    return redirect(url_for('.index'))
+    return render_template('blog/index.html', pagination=pagination, posts=posts)
+
+
+# @blog_bp.route('/clear_image_cache')
+# def clear_image_cache():
+#     post_with_img=Post.query.filter(Post.img_name).all()
+#     img_list=[p.img_name for p in post_with_img]
+#     img_name=', '.join(img_list)
+#     img_list=img_name.split(', ')
+#     client=oss.Client()
+#     img_all=client.list()
+    
+#     for i in img_all:
+#         if i not in img_list:
+#             client.remove(i)
+
+#     return redirect(url_for('.index'))
 
 
 @blog_bp.route('/about')
