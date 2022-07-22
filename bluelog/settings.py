@@ -13,7 +13,9 @@ basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 config = myconfig.load()
 
 minio_protocol = 'https' if config['secure_minio'] else 'http'
-minio_host = minio_protocol+'://'+config['host_minio']+'/'+config['bucket']
+minio_port = config['host_minio'].split(':')[1]
+minio_host = '%s://127.0.0.1:%s/%s' % (minio_protocol, minio_port, config['bucket']
+                                    ) if config['local_minio'] else minio_protocol+'://'+config['host_minio']+'/'+config['bucket']
 
 # SQLite URI compatible
 WIN = sys.platform.startswith('win')
