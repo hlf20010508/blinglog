@@ -14,18 +14,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ckeditor-contents.css') }}" type="text/css">
     {% endblock head %}
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.slim.min.js') }}"></script>
-    <script>
-        $(() => {
-            let date = new Date()
-            let year = date.getFullYear()
-            $('.year').text(year)
-            let host = location.protocol + '//' + document.domain + ':' + location.port
-            if (host != 'http://124.223.224.49:5000') {
-                $('.indexLink').attr('target', '_blank')
-            }
-        })
-    </script>
 </head>
 
 <body>
@@ -121,5 +109,17 @@
     {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
     {% endblock %}
 </body>
+
+<script>
+    let date = new Date()
+    let year = date.getFullYear()
+    let element = document.getElementsByClassName('year')[0]
+    element.textContent = year
+    let host = location.protocol + '//' + document.domain + ':' + location.port
+    if (host != 'http://124.223.224.49:5000') {
+        element = document.getElementsByClassName('indexLink')[0]
+        element.setAttribute('target', '_blank')
+    }
+</script>
 
 </html>
