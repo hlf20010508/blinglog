@@ -198,7 +198,7 @@ def init_mysql(host, user, password, port, database, user_blog, password_blog):
 
     sql = '''create table if not exists post(
     id bigint primary key auto_increment,
-    title varchar(60),
+    title text,
     body longtext,
     timestamp datetime,
     can_comment tinyint,
