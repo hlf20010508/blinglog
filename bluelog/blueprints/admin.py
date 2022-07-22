@@ -11,7 +11,7 @@ from flask import render_template, flash, redirect, url_for, request, current_ap
 from flask_login import login_required, current_user
 from flask_ckeditor import upload_success, upload_fail
 
-from bluelog.extensions import db
+from bluelog.extensions import db, csrf
 from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm
 from bluelog.models import Post, Category, Comment, Link
 from bluelog.utils import redirect_back, allowed_file
@@ -262,7 +262,7 @@ def delete_link(link_id):
     flash('Link deleted.', 'success')
     return redirect(url_for('.manage_link'))
 
-
+@csrf.exempt
 @admin_bp.route('/upload', methods=['POST'])
 def upload_image():
     f = request.files.get('upload')

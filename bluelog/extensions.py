@@ -6,7 +6,7 @@
     :license: MIT, see LICENSE for more details.
 """
 from flask_bootstrap import Bootstrap
-from flask_ckeditor import CKEditor
+from flask_ckeditor import CKEditor5 as CKEditor
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
