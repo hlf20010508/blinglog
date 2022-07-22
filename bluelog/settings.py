@@ -12,6 +12,9 @@ import config as myconfig
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 config = myconfig.load()
 
+minio_protocol = 'https' if config['secure_minio'] else 'http'
+minio_host = minio_protocol+'://'+config['host_minio']+'/'+config['bucket']
+
 # SQLite URI compatible
 WIN = sys.platform.startswith('win')
 if WIN:
@@ -47,11 +50,8 @@ class BaseConfig(object):
     BLUELOG_SLOW_QUERY_THRESHOLD = 1
 
     # BLUELOG_UPLOAD_PATH = os.path.join(basedir, 'uploads')
-    protocol = 'https' if config['secure_minio'] else 'http'
-    port = config['host_minio'].split(':')[1]
-    host = '%s://127.0.0.1:%s/%s' % (protocol, port, config['bucket']
-                                     ) if config['local_minio'] else protocol+'://'+config['host_minio']+'/'+config['bucket']
-    BLUELOG_MINIO_PATH = host
+    
+    BLUELOG_MINIO_PATH = minio_host
     BLUELOG_ALLOWED_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
 
