@@ -9,7 +9,6 @@ import re
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint#, send_from_directory
 from flask_login import login_required, current_user
-from flask_ckeditor import upload_success, upload_fail
 
 from bluelog.extensions import db, csrf
 from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm
@@ -72,6 +71,7 @@ def new_post():
     if form.validate_on_submit():
         title = form.title.data
         body = form.body.data
+        print('body',body)
         category = Category.query.get(form.category.data)
         img_name = get_img_name(body)
         post = Post(title=title, body=body, category=category, img_name=img_name)

@@ -12,6 +12,18 @@
 
 {% block scripts %}
     {{ super() }}
-    <script type="text/javascript" src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
-    {{ ckeditor.config(name='body') }}
+    <script type="text/javascript" src="{{ url_for('static', filename='cherry-markdown/cherry-markdown.min.js') }}"></script>
+    <script>
+        new Cherry({
+        id: 'body',
+        value: '# welcome to cherry editor!',
+        });
+        var divValue = document.getElementById('divValue').value
+        var textList = document.getElementsByClassName('CodeMirror-line')
+        var text = ''
+        for(let i = 0; i < textList.length; i++){
+            text+=textList[i].innerHTML
+        }
+        divValue = text;
+    </script>
 {% endblock %}
