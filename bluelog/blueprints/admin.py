@@ -5,7 +5,7 @@
     :copyright: © 2018 Grey Li <withlihui@gmail.com>
     :license: MIT, see LICENSE for more details.
 """
-import os
+import re
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint#, send_from_directory
 from flask_login import login_required, current_user
@@ -48,15 +48,20 @@ def manage_post():
     return render_template('admin/manage_post.html', page=page, pagination=pagination, posts=posts)
 
 def get_img_name(body):
-    img_list=[]
-    from bs4 import BeautifulSoup as BSHTML
-    htmlText = '<html>'+body+'</html>'
-    soup = BSHTML(htmlText)
-    images = soup.findAll('img')
-    for image in images:
-        img_list.append(image['src'].split('/')[-1])
-    if len(img_list)>0:
-        return ', '.join(img_list)
+    # img_list=[]
+    # from bs4 import BeautifulSoup as BSHTML
+    # htmlText = '<html>'+body+'</html>'
+    # soup = BSHTML(htmlText)
+    # images = soup.findAll('img')
+    # for image in images:
+    #     img_list.append(image['src'].split('/')[-1])
+    # if len(img_list)>0:
+    #     return ', '.join(img_list)
+    # else:
+    #     return None
+    images=[i[:-1].split('/')[-1] for i in re.findall('!\\[[^\\]]*\\]\\([^\\)]+\\)', body)]
+    if len(images)>0:
+        return ', '.join(images)
     else:
         return None
 

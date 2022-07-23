@@ -1,12 +1,25 @@
-from cgitb import text
-import re
+from markdownify import markdownify as md
+# from ezmysql import ConnectionSync
 
-text='[] () []() test![[[[test](http://www.baidu.com/test.png)dsfsdfs![test](http://www.baidu.com/ok.png)dsf'
+# db=ConnectionSync(host='124.223.224.49', database='blog', user='root', password='1486922887')
+# result=db.query('select id, body from post')
+# for i in result:
+#     body=md(i['body'])
+#     db.table_update('post',{'body':body},'id',i['id'])
 
-name_regex = "[^]]+"
-# http:// or https:// followed by anything but a closing paren
-url_regex = "http[s]?://[^)]+"
+print(md('''
+<p>Hello world!</p>
 
-markup_regex = '!\[({0})]\(\s*({1})\s*\)'.format(name_regex, url_regex)
+<p>It&#39;s Lingfeng Huang from Hangzhou, Zhejiang,&nbsp;People&#39;s Republic of China.</p>
 
-print([i[:-1].split('/')[-1] for i in re.findall('!\\[[^\\]]+\\]\\([^\\)]+\\)', text)])
+<p>Born on May 8th 2001.</p>
+
+<p>I like computer&nbsp;games, photography, computer programming&nbsp;and body-building.</p>
+
+<p>I also want to make friends with people around the world who are kind and willing to exchange ideas.</p>
+
+<p>This is my email:&nbsp;hlf01@icloud.com.</p>
+
+<p>You can also find me with my Links.</p>
+
+<p>Talking in Messenger or Telegram is also welcome~</p>'''))

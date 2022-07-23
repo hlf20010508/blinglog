@@ -206,7 +206,6 @@ class _CKEditor5(object):
 
 
         file_uploader = kwargs.get('file_uploader', current_app.config['CKEDITOR_FILE_UPLOADER'])
-        min_height=current_app.config['CKEDITOR_MIN_HEIGHT']
 
         if file_uploader != '':
             file_uploader = get_url(file_uploader)
@@ -215,22 +214,9 @@ class _CKEditor5(object):
         editor = self.editor_dict[self.editor_type]
         return Markup('''
         <script type="text/javascript">
-            function MinHeightPlugin(editor) {
-                this.editor = editor;
-            }
-            MinHeightPlugin.prototype.init = function() {
-                this.editor.ui.view.editable.extendTemplate({
-                    attributes: {
-                        style: {
-                            minHeight: '%spx'
-                        }
-                    }
-                });
-            };
-            %s.builtinPlugins.push(MinHeightPlugin);
-            %s                                                                                  
+            %s
             .create(document.querySelector( "%s" ), { 
-                %s 
+                %s
             })                                 
             .then( ckeditor => {                                                                
                     window.ckeditor = ckeditor;                                                 
@@ -244,7 +230,7 @@ class _CKEditor5(object):
                     document.getElementById( "%s" ).value = window.ckeditor.getData();
             });
         </script>
-        ''' % (min_height, editor, editor, '#'+name+'_', plugin, name))
+        ''' % (editor, '#'+name+'_', plugin, name))
 
     @staticmethod
     def create(name='ckeditor', value=''):

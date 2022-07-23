@@ -14,6 +14,7 @@ from bluelog.forms import CommentForm, AdminCommentForm
 from bluelog.models import Post, Category, Comment
 from bluelog.utils import redirect_back
 import bluelog.OSS_minio as oss
+import markdown2 as markdown
 
 blog_bp = Blueprint('blog', __name__)
 
@@ -24,11 +25,13 @@ def index():
     per_page = current_app.config['BLUELOG_POST_PER_PAGE']
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
     posts = pagination.items
+    for i in range(len(posts)):
+        posts[i].body=markdown.markdown(posts[i].body, extras=['fenced-code-blocks'])
 
     post_with_img=Post.query.filter(Post.img_name).all()
     img_list=[p.img_name for p in post_with_img]
-    img_name=', '.join(img_list)
-    img_list=img_name.split(', ')
+    img_name=', '.join(img_list) # 连接每条记录的所有图片名字符串
+    img_list=img_name.split(', ') # 拆分得到所有图片名单独的字符串
     client=oss.Client()
     img_all=client.list()
     
@@ -57,7 +60,8 @@ def index():
 
 @blog_bp.route('/about')
 def about():
-    return render_template('blog/about.html')
+    about=markdown.markdown(current_user.about, extras=['fenced-code-blocks'])
+    return render_template('blog/about.html', about=about)
 
 
 @blog_bp.route('/category/<int:category_id>')
@@ -73,6 +77,7 @@ def show_category(category_id):
 @blog_bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def show_post(post_id):
     post = Post.query.get_or_404(post_id)
+    post.body=markdown.markdown(post.body, extras=['fenced-code-blocks', 'highlightjs-lang'])
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_COMMENT_PER_PAGE']
     pagination = Comment.query.with_parent(post).filter_by(reviewed=True).order_by(Comment.timestamp.asc()).paginate(

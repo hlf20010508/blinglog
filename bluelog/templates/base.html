@@ -12,6 +12,7 @@
         href="{{ url_for('static', filename='css/%s.min.css' % request.cookies.get('theme', 'perfect_blue')) }}"
         type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/highlight.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ckeditor-contents.css') }}" type="text/css">
     {% endblock head %}
 </head>
@@ -109,7 +110,6 @@
     {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
     {% endblock %}
 </body>
-
 <script>
     let date = new Date()
     let year = date.getFullYear()

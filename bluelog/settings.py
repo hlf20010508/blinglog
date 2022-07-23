@@ -36,7 +36,6 @@ class BaseConfig(object):
     CKEDITOR_ENABLE_CSRF = True
     CKEDITOR_FILE_UPLOADER = 'admin.upload_image'
     CKEDITOR_EDITOR_TYPE = 'classic'
-    CKEDITOR_MIN_HEIGHT = 300
 
     MAIL_SERVER = os.getenv('MAIL_SERVER')
     MAIL_PORT = 465
