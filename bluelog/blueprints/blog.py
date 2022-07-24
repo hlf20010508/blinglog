@@ -11,7 +11,7 @@ from flask_login import current_user
 from bluelog.emails import send_new_comment_email, send_new_reply_email
 from bluelog.extensions import db
 from bluelog.forms import CommentForm, AdminCommentForm
-from bluelog.models import Post, Category, Comment
+from bluelog.models import Post, Category, Comment, Admin
 from bluelog.utils import redirect_back
 import bluelog.OSS_minio as oss
 import markdown2 as markdown
@@ -23,18 +23,22 @@ blog_bp = Blueprint('blog', __name__)
 def index():
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_POST_PER_PAGE']
-    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
+    pagination = Post.query.order_by(
+        Post.timestamp.desc()).paginate(page, per_page=per_page)
     posts = pagination.items
     for i in range(len(posts)):
-        posts[i].body=markdown.markdown(posts[i].body)
+        posts[i].body = markdown.markdown(posts[i].body)
 
-    post_with_img=Post.query.filter(Post.img_name).all()
-    img_list=[p.img_name for p in post_with_img]
-    img_name=', '.join(img_list) # 连接每条记录的所有图片名字符串
-    img_list=img_name.split(', ') # 拆分得到所有图片名单独的字符串
-    client=oss.Client()
-    img_all=client.list()
-    
+    post_with_img = Post.query.filter(Post.img_name).all()
+    admin_with_img = Admin.query.filter(Admin.img_name).all()
+    img_list = [p.img_name for p in post_with_img] + \
+        [a.img_name for a in admin_with_img]
+    img_name = ', '.join(img_list)  # 连接每条记录的所有图片名字符串
+    img_list = img_name.split(', ')  # 拆分得到所有图片名单独的字符串
+
+    client = oss.Client()
+    img_all = client.list()
+
     for i in img_all:
         if i not in img_list:
             client.remove(i)
@@ -42,25 +46,10 @@ def index():
     return render_template('blog/index.html', pagination=pagination, posts=posts)
 
 
-# @blog_bp.route('/clear_image_cache')
-# def clear_image_cache():
-#     post_with_img=Post.query.filter(Post.img_name).all()
-#     img_list=[p.img_name for p in post_with_img]
-#     img_name=', '.join(img_list)
-#     img_list=img_name.split(', ')
-#     client=oss.Client()
-#     img_all=client.list()
-    
-#     for i in img_all:
-#         if i not in img_list:
-#             client.remove(i)
-
-#     return redirect(url_for('.index'))
-
-
 @blog_bp.route('/about')
 def about():
-    about=markdown.markdown(current_user.about, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
+    about = markdown.markdown(current_user.about, extras=[
+                              'fenced-code-blocks', 'highlightjs-lang', 'tables'])
     return render_template('blog/about.html', about=about)
 
 
@@ -69,7 +58,8 @@ def show_category(category_id):
     category = Category.query.get_or_404(category_id)
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_POST_PER_PAGE']
-    pagination = Post.query.with_parent(category).order_by(Post.timestamp.desc()).paginate(page, per_page)
+    pagination = Post.query.with_parent(category).order_by(
+        Post.timestamp.desc()).paginate(page, per_page)
     posts = pagination.items
     return render_template('blog/category.html', category=category, pagination=pagination, posts=posts)
 
@@ -77,7 +67,8 @@ def show_category(category_id):
 @blog_bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def show_post(post_id):
     post = Post.query.get_or_404(post_id)
-    post.body=markdown.markdown(post.body, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
+    post.body = markdown.markdown(
+        post.body, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_COMMENT_PER_PAGE']
     pagination = Comment.query.with_parent(post).filter_by(reviewed=True).order_by(Comment.timestamp.asc()).paginate(

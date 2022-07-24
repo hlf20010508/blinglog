@@ -7,16 +7,26 @@
 """
 import re
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, jsonify#, send_from_directory
+from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, jsonify
 from flask_login import login_required, current_user
 
-from bluelog.extensions import db, csrf
+from bluelog.extensions import db
 from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm
 from bluelog.models import Post, Category, Comment, Link
 from bluelog.utils import redirect_back, allowed_file
 import bluelog.OSS_minio as oss
 
 admin_bp = Blueprint('admin', __name__)
+
+
+def get_img_name(body):
+    images = [i[:-1].split('/')[-1]
+              for i in re.findall('!\\[[^\\]]*\\]\\([^\\)]+\\)', body)]
+    if len(images) > 0:
+        return ', '.join(images)
+    else:
+        return None
+
 
 @admin_bp.route('/settings', methods=['GET', 'POST'])
 @login_required
@@ -27,9 +37,10 @@ def settings():
         current_user.blog_title = form.blog_title.data
         current_user.blog_sub_title = form.blog_sub_title.data
         current_user.about = form.body.data
+        current_user.img_name = get_img_name(form.body.data)
         db.session.commit()
         flash('Setting updated.', 'success')
-        return redirect(url_for('blog.index'))
+        return redirect(url_for('blog.about'))
     form.name.data = current_user.name
     form.blog_title.data = current_user.blog_title
     form.blog_sub_title.data = current_user.blog_sub_title
@@ -46,23 +57,6 @@ def manage_post():
     posts = pagination.items
     return render_template('admin/manage_post.html', page=page, pagination=pagination, posts=posts)
 
-def get_img_name(body):
-    # img_list=[]
-    # from bs4 import BeautifulSoup as BSHTML
-    # htmlText = '<html>'+body+'</html>'
-    # soup = BSHTML(htmlText)
-    # images = soup.findAll('img')
-    # for image in images:
-    #     img_list.append(image['src'].split('/')[-1])
-    # if len(img_list)>0:
-    #     return ', '.join(img_list)
-    # else:
-    #     return None
-    images=[i[:-1].split('/')[-1] for i in re.findall('!\\[[^\\]]*\\]\\([^\\)]+\\)', body)]
-    if len(images)>0:
-        return ', '.join(images)
-    else:
-        return None
 
 @admin_bp.route('/post/new', methods=['GET', 'POST'])
 @login_required
@@ -71,13 +65,10 @@ def new_post():
     if form.validate_on_submit():
         title = form.title.data
         body = form.body.data
-        print('body',body)
         category = Category.query.get(form.category.data)
         img_name = get_img_name(body)
-        post = Post(title=title, body=body, category=category, img_name=img_name)
-        # same with:
-        # category_id = form.category.data
-        # post = Post(title=title, body=body, category_id=category_id)
+        post = Post(title=title, body=body,
+                    category=category, img_name=img_name)
         db.session.add(post)
         db.session.commit()
         flash('Post created.', 'success')
@@ -108,12 +99,12 @@ def edit_post(post_id):
 @login_required
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
-    img_name=post.img_name
+    img_name = post.img_name
     db.session.delete(post)
     db.session.commit()
     flash('Post deleted.', 'success')
     if img_name != None:
-        img_list=img_name.split(', ')
+        img_list = img_name.split(', ')
         for img in img_list:
             oss.Client().remove(img)
     return redirect_back()
@@ -136,7 +127,8 @@ def set_comment(post_id):
 @admin_bp.route('/comment/manage')
 @login_required
 def manage_comment():
-    filter_rule = request.args.get('filter', 'all')  # 'all', 'unreviewed', 'admin'
+    # 'all', 'unreviewed', 'admin'
+    filter_rule = request.args.get('filter', 'all')
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_COMMENT_PER_PAGE']
     if filter_rule == 'unread':
@@ -146,7 +138,8 @@ def manage_comment():
     else:
         filtered_comments = Comment.query
 
-    pagination = filtered_comments.order_by(Comment.timestamp.desc()).paginate(page, per_page=per_page)
+    pagination = filtered_comments.order_by(
+        Comment.timestamp.desc()).paginate(page, per_page=per_page)
     comments = pagination.items
     return render_template('admin/manage_comment.html', comments=comments, pagination=pagination)
 
@@ -267,18 +260,19 @@ def delete_link(link_id):
     flash('Link deleted.', 'success')
     return redirect(url_for('.manage_link'))
 
+
 @admin_bp.route('/upload', methods=['POST'])
 def upload_image():
     f = request.files.get('file')
     if not allowed_file(f.filename):
         return jsonify({
             'success': False,
-            'error':'Image only!'
+            'error': 'Image only!'
         })
     now = datetime.now()  # 获得当前时间
     timestr = now.strftime("%Y_%m_%d_%H_%M_%S")
-    f.filename=timestr+'.'+f.filename.split('.')[-1]
-    url=oss.Client().upload(f.filename, f)
+    f.filename = timestr+'.'+f.filename.split('.')[-1]
+    url = oss.Client().upload(f.filename, f)
     return jsonify({
         'success': True,
         'url': url

@@ -38,7 +38,8 @@ class Client:
                 "file is successfully uploaded as \n object %s to bucket %s." % (
                     remote_path, self.bucket)
             )
-            address = 'http://'+config['host_minio']+'/'+self.bucket+'/'+remote_path
+            address = 'http://'+config['host_minio'] + \
+                '/'+self.bucket+'/'+remote_path
             print(address)
             return address
         except S3Error as exc:

@@ -14,12 +14,13 @@ config = myconfig.load()
 minio_protocol = 'https' if config['secure_minio'] else 'http'
 minio_port = config['host_minio'].split(':')[1]
 minio_host = '%s://127.0.0.1:%s/%s' % (minio_protocol, minio_port, config['bucket']
-                                    ) if config['local_minio'] else minio_protocol+'://'+config['host_minio']+'/'+config['bucket']
+                                       ) if config['local_minio'] else minio_protocol+'://'+config['host_minio']+'/'+config['bucket']
 
 port = config['host_mysql'].split(':')[1]
 mysql_host = config['username_mysql']+':'+config['password_mysql']+'@'+'127.0.0.1:'+port+'/' + \
     config['database'] if config['local_mysql'] else config['username_mysql'] + \
-    ':'+config['password_mysql']+'@'+config['host_mysql']+'/'+config['database']
+    ':'+config['password_mysql']+'@' + \
+    config['host_mysql']+'/'+config['database']
 
 # SQLite URI compatible
 WIN = sys.platform.startswith('win')
@@ -50,10 +51,11 @@ class Config(object):
     BLUELOG_MANAGE_POST_PER_PAGE = 15
     BLUELOG_COMMENT_PER_PAGE = 15
     # ('theme name', 'display name')
-    BLUELOG_THEMES = {'perfect_blue': 'Perfect Blue', 'black_swan': 'Black Swan'}
+    BLUELOG_THEMES = {'perfect_blue': 'Perfect Blue',
+                      'black_swan': 'Black Swan'}
     BLUELOG_SLOW_QUERY_THRESHOLD = 1
 
     # BLUELOG_UPLOAD_PATH = os.path.join(basedir, 'uploads')
-    
+
     BLUELOG_MINIO_PATH = minio_host
     BLUELOG_ALLOWED_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']

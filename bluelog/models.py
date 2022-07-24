@@ -19,6 +19,7 @@ class Admin(db.Model, UserMixin):
     blog_sub_title = db.Column(db.String(100))
     name = db.Column(db.String(30))
     about = db.Column(db.Text)
+    img_name = db.Column(db.Text)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -31,7 +32,7 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)
     posts = db.relationship('Post', back_populates='category')
-    
+
     def delete(self):
         default_category = Category.query.get(1)
         posts = self.posts[:]
@@ -51,7 +52,8 @@ class Post(db.Model):
     img_name = db.Column(db.Text)
 
     category = db.relationship('Category', back_populates='posts')
-    comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
+    comments = db.relationship(
+        'Comment', back_populates='post', cascade='all, delete-orphan')
 
 
 class Comment(db.Model):
@@ -68,8 +70,10 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
 
     post = db.relationship('Post', back_populates='comments')
-    replies = db.relationship('Comment', back_populates='replied', cascade='all, delete-orphan')
-    replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
+    replies = db.relationship(
+        'Comment', back_populates='replied', cascade='all, delete-orphan')
+    replied = db.relationship(
+        'Comment', back_populates='replies', remote_side=[id])
     # Same with:
     # replies = db.relationship('Comment', backref=db.backref('replied', remote_side=[id]),
     # cascade='all,delete-orphan')
