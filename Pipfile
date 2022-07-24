@@ -1,16 +1,12 @@
 [[source]]
-url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+url = "https://pypi.org/simple"
 verify_ssl = true
-name = "tsinghua"
-
-[dev-packages]
-coverage = "==5.0.4"
-watchdog = "==0.10.2"
+name = "pypi"
 
 [packages]
-pymysql = "==0.9.3"
-alembic = "==1.4.2"
 click = "==7.1.1"
+alembic = "==1.4.2"
+pymysql = "==0.9.3"
 itsdangerous = "==1.1.0"
 jinja2 = "==2.11.1"
 mako = "==1.1.2"

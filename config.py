@@ -12,7 +12,8 @@ from werkzeug.security import generate_password_hash
 def init():
     username_blog = input('Username of blog: ')
     password_blog = input('Password of blog: ')
-    host_minio = input('Host name or ip address of minio server (eg: example.com:9000): ')
+    host_minio = input(
+        'Host name or ip address of minio server (eg: example.com:9000): ')
     secure_minio = True if input(
         'Protocol of server: 0 http 1 https ') == '1' else False
     local_minio = True if input(
@@ -150,13 +151,19 @@ def init_mysql(host, user, password, port, database, user_blog, password_blog):
     cursor.execute(sql)
 
     password_hash_blog = generate_password_hash(password_blog)
-    sql='''select username from admin where username="%s"'''%user_blog
+    sql = '''select username from admin where username="%s"''' % user_blog
     cursor.execute(sql)
-    result=cursor.fetchall()
+    result = cursor.fetchall()
     if len(result):
-        sql='''update admin set password_hash = "%s" where username = "%s"'''%(password_hash_blog, user_blog)
+        sql = '''update admin set password_hash = "%s" where username = "%s"''' % (
+            password_hash_blog, user_blog)
     else:
-        sql = '''insert into admin(username, password_hash) values("%s", "%s")''' % (user_blog, password_hash_blog)
+        blog_title = 'Bluelog',
+        blog_sub_title = "No, I'm the real thing.",
+        name = 'Admin',
+        about = 'Anything about you.'
+        sql = '''insert into admin(username, password_hash, blog_title, blog_sub_title, name, about) values("%s", "%s")''' % (
+            user_blog, password_hash_blog, blog_title, blog_sub_title, name, about)
     cursor.execute(sql)
 
     sql = '''create table if not exists category(
@@ -166,11 +173,11 @@ def init_mysql(host, user, password, port, database, user_blog, password_blog):
     '''
     cursor.execute(sql)
 
-    sql='''select name from category where name="Default"'''
+    sql = '''select name from category where name="Default"'''
     cursor.execute(sql)
-    result=cursor.fetchall()
+    result = cursor.fetchall()
     if not len(result):
-        sql = '''insert into category(name) values("%s")'''%('Default')
+        sql = '''insert into category(name) values("%s")''' % ('Default')
         cursor.execute(sql)
 
     sql = '''create table if not exists comment(
