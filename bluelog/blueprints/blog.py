@@ -26,7 +26,7 @@ def index():
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
     posts = pagination.items
     for i in range(len(posts)):
-        posts[i].body=markdown.markdown(posts[i].body, extras=['fenced-code-blocks'])
+        posts[i].body=markdown.markdown(posts[i].body)
 
     post_with_img=Post.query.filter(Post.img_name).all()
     img_list=[p.img_name for p in post_with_img]
@@ -60,7 +60,7 @@ def index():
 
 @blog_bp.route('/about')
 def about():
-    about=markdown.markdown(current_user.about, extras=['fenced-code-blocks'])
+    about=markdown.markdown(current_user.about, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
     return render_template('blog/about.html', about=about)
 
 
@@ -77,7 +77,7 @@ def show_category(category_id):
 @blog_bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def show_post(post_id):
     post = Post.query.get_or_404(post_id)
-    post.body=markdown.markdown(post.body, extras=['fenced-code-blocks', 'highlightjs-lang'])
+    post.body=markdown.markdown(post.body, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_COMMENT_PER_PAGE']
     pagination = Comment.query.with_parent(post).filter_by(reviewed=True).order_by(Comment.timestamp.asc()).paginate(
