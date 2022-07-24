@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash
 def init():
     username_blog = input('Username of blog: ')
     password_blog = input('Password of blog: ')
+
     host_minio = input(
         'Host name or ip address of minio server (eg: example.com:9000): ')
     secure_minio = True if input(
@@ -21,6 +22,7 @@ def init():
     username_minio = input('Username of minio: ')
     password_minio = input('Password of minio: ')
     bucket = input('Bucket name: ')
+
     host_mysql = input(
         'Host name or ip address of mysql server (eg: example.com:3306) : ')
     local_mysql = True if input(
@@ -28,6 +30,9 @@ def init():
     username_mysql = input('Username of mysql: ')
     password_mysql = input('Password of mysql: ')
     database = input('Database name: ')
+
+    email_setted = True if input(
+        'Use email for notification? 0 No 1 Yes ') == '1' else False
 
     config = {
         'username_blog': username_blog,
@@ -43,7 +48,16 @@ def init():
         'username_mysql': username_mysql,
         'password_mysql': password_mysql,
         'database': database,
+        'email_setted': email_setted
     }
+
+    if email_setted:
+        config['host_email'] = input('Host name or ip address of email server with smtp (eg: smtp.mail.me.com): ')
+        config['port_email'] = int(input('Port of email server with smtp (eg: 587): '))
+        config['ssl_email'] = True if input('Use SSL? 0 No 1 Yes ')=='1' else False
+        config['tls_email'] = True if input('Use TLS? 0 No 1 Yes ')=='1' else False
+        config['address_email'] = input('Email address: ')
+        config['password_email'] = input('Password of email: ')
 
     config_file = open('config.json', 'w')
     json.dump(config, config_file)

@@ -14,7 +14,7 @@ from bluelog.forms import CommentForm, AdminCommentForm
 from bluelog.models import Post, Category, Comment, Admin
 from bluelog.utils import redirect_back
 import bluelog.OSS_minio as oss
-import markdown2 as markdown
+from markdown2 import markdown
 
 blog_bp = Blueprint('blog', __name__)
 
@@ -27,7 +27,7 @@ def index():
         Post.timestamp.desc()).paginate(page, per_page=per_page)
     posts = pagination.items
     for i in range(len(posts)):
-        posts[i].body = markdown.markdown(posts[i].body)
+        posts[i].body = markdown(posts[i].body)
 
     post_with_img = Post.query.filter(Post.img_name).all()
     admin_with_img = Admin.query.filter(Admin.img_name).all()
@@ -48,8 +48,8 @@ def index():
 
 @blog_bp.route('/about')
 def about():
-    about = markdown.markdown(current_user.about, extras=[
-                              'fenced-code-blocks', 'highlightjs-lang', 'tables'])
+    about = markdown(current_user.about, extras=[
+        'fenced-code-blocks', 'highlightjs-lang', 'tables'])
     return render_template('blog/about.html', about=about)
 
 
@@ -67,8 +67,6 @@ def show_category(category_id):
 @blog_bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def show_post(post_id):
     post = Post.query.get_or_404(post_id)
-    post.body = markdown.markdown(
-        post.body, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_COMMENT_PER_PAGE']
     pagination = Comment.query.with_parent(post).filter_by(reviewed=True).order_by(Comment.timestamp.asc()).paginate(
@@ -99,15 +97,22 @@ def show_post(post_id):
         if replied_id:
             replied_comment = Comment.query.get_or_404(replied_id)
             comment.replied = replied_comment
-            send_new_reply_email(replied_comment)
+            send_new_reply_email(replied_comment, comment)
         db.session.add(comment)
         db.session.commit()
         if current_user.is_authenticated:  # send message based on authentication status
             flash('Comment published.', 'success')
         else:
             flash('Thanks, your comment will be published after reviewed.', 'info')
-            send_new_comment_email(post)  # send notification email to admin
+            # send notification email to admin
+            send_new_comment_email(post, comment)
         return redirect(url_for('.show_post', post_id=post_id))
+
+    post.body = markdown(
+        post.body, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
+    for comment in comments:
+        comment.body = markdown(
+            comment.body, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
     return render_template('blog/post.html', post=post, pagination=pagination, form=form, comments=comments)
 
 

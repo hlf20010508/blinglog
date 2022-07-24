@@ -92,11 +92,11 @@
                                     </small>
                                 </div>
                                 {% if comment.replied %}
-                                    <p class="alert alert-dark reply-body">{{ comment.replied.author }}:
-                                        <br>{{ comment.replied.body }}
-                                    </p>
+                                    <div class="alert alert-dark reply-body" style="color: #868e96; font-style: italic">{{ comment.replied.author }}:
+                                        <br>{{ comment.replied.body|safe }}
+                                    </div>
                                 {%- endif -%}
-                                <p class="mb-1">{{ comment.body }}</p>
+                                <div class="mb-1">{{ comment.body|safe }}</div>
                                 <div class="float-right">
                                     <a class="btn btn-light btn-sm"
                                        href="{{ url_for('.reply_comment', comment_id=comment.id) }}">Reply</a>
@@ -129,8 +129,13 @@
             {% endif %}
             {% if post.can_comment %}
                 <div id="comment-form">
-                    {{ render_form(form, action=request.full_path) }}
+                    <form action="{{ request.full_path }}" method="post" class="form" role="form" novalidate>
+                        {{ render_form(form) }}
+                    </form>
                 </div>
+                <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.min.js') }}"></script>
+                <script type="text/javascript" src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
+                <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.config.js') }}"></script>
             {% else %}
                 <div class="tip"><h5>Comment disabled.</h5></div>
             {% endif %}
