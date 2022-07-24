@@ -6,12 +6,9 @@
     :license: MIT, see LICENSE for more details.
 """
 from datetime import datetime
-
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from bluelog.extensions import db
-#from extensions import db
 
 
 class Admin(db.Model, UserMixin):

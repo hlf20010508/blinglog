@@ -7,23 +7,14 @@
     <div class="page-header">
         <h1>New Post</h1>
     </div>
-    {{ render_form(form) }}
+    <form action="" method="post" class="form" role="form" novalidate>
+        {{ render_form(form) }}
+    </form>
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
-    <script type="text/javascript" src="{{ url_for('static', filename='cherry-markdown/cherry-markdown.min.js') }}"></script>
-    <script>
-        new Cherry({
-        id: 'body',
-        value: '# welcome to cherry editor!',
-        });
-        var divValue = document.getElementById('divValue').value
-        var textList = document.getElementsByClassName('CodeMirror-line')
-        var text = ''
-        for(let i = 0; i < textList.length; i++){
-            text+=textList[i].innerHTML
-        }
-        divValue = text;
-    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.config.js') }}"></script>
 {% endblock %}

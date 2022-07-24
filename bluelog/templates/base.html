@@ -1,7 +1,6 @@
 {% from 'bootstrap/nav.html' import render_nav_item %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     {% block head %}
     <meta charset="utf-8">
@@ -13,10 +12,9 @@
         type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/highlight.min.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='cherry-markdown/cherry-markdown.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/easymde.min.css') }}" type="text/css">
     {% endblock head %}
 </head>
-
 <body>
     {% block nav %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -72,7 +70,6 @@
         </div>
     </nav>
     {% endblock nav %}
-
     <main class="container">
         {% for message in get_flashed_messages(with_categories=True) %}
         <div class="alert alert-{{ message[0] }}" role="alert">
@@ -106,20 +103,9 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.slim.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/renderTime.js') }}"></script>
     {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
     {% endblock %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/foot.js') }}"></script>
 </body>
-<script>
-    let date = new Date()
-    let year = date.getFullYear()
-    let element = document.getElementsByClassName('year')[0]
-    element.textContent = year
-    let host = location.protocol + '//' + document.domain + ':' + location.port
-    if (host != 'http://124.223.224.49:5000') {
-        element = document.getElementsByClassName('indexLink')[0]
-        element.setAttribute('target', '_blank')
-    }
-</script>
-
 </html>

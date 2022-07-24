@@ -7,7 +7,7 @@
 """
 import re
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint#, send_from_directory
+from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, jsonify#, send_from_directory
 from flask_login import login_required, current_user
 
 from bluelog.extensions import db, csrf
@@ -26,14 +26,14 @@ def settings():
         current_user.name = form.name.data
         current_user.blog_title = form.blog_title.data
         current_user.blog_sub_title = form.blog_sub_title.data
-        current_user.about = form.about.data
+        current_user.about = form.body.data
         db.session.commit()
         flash('Setting updated.', 'success')
         return redirect(url_for('blog.index'))
     form.name.data = current_user.name
     form.blog_title.data = current_user.blog_title
     form.blog_sub_title.data = current_user.blog_sub_title
-    form.about.data = current_user.about
+    form.body.data = current_user.about
     return render_template('admin/settings.html', form=form)
 
 
@@ -267,14 +267,19 @@ def delete_link(link_id):
     flash('Link deleted.', 'success')
     return redirect(url_for('.manage_link'))
 
-@csrf.exempt
 @admin_bp.route('/upload', methods=['POST'])
 def upload_image():
-    f = request.files.get('upload')
+    f = request.files.get('file')
     if not allowed_file(f.filename):
-        return upload_fail('Image only!')
+        return jsonify({
+            'success': False,
+            'error':'Image only!'
+        })
     now = datetime.now()  # 获得当前时间
     timestr = now.strftime("%Y_%m_%d_%H_%M_%S")
     f.filename=timestr+'.'+f.filename.split('.')[-1]
     url=oss.Client().upload(f.filename, f)
-    return upload_success(url, f.filename)
+    return jsonify({
+        'success': True,
+        'url': url
+    })

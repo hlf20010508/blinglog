@@ -14,25 +14,20 @@ from flask import Flask, render_template, request
 from flask_login import current_user
 from flask_sqlalchemy import get_debug_queries
 from flask_wtf.csrf import CSRFError
-
+from bluelog.settings import Config
 from bluelog.blueprints.admin import admin_bp
 from bluelog.blueprints.auth import auth_bp
 from bluelog.blueprints.blog import blog_bp
 from bluelog.extensions import bootstrap, db, login_manager, csrf, mail, moment, toolbar, migrate
 from bluelog.models import Admin, Post, Category, Comment, Link
-from bluelog.settings import config
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
-def create_app(config_name=None):
-    if config_name is None:
-        config_name = os.getenv('FLASK_CONFIG', 'development')
-
+def create_app():
     app = Flask('bluelog')
     app.debug=False
-    app.config.from_object(config[config_name])
-
+    app.config.from_object(Config)
     register_logging(app)
     register_extensions(app)
     register_blueprints(app)
@@ -63,7 +58,7 @@ def register_logging(app):
                                        maxBytes=10 * 1024 * 1024, backupCount=10)
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
-
+    
     mail_handler = SMTPHandler(
         mailhost=app.config['MAIL_SERVER'],
         fromaddr=app.config['MAIL_USERNAME'],
@@ -180,34 +175,6 @@ def register_commands(app):
             db.session.add(category)
 
         db.session.commit()
-        click.echo('Done.')
-
-    @app.cli.command()
-    @click.option('--category', default=10, help='Quantity of categories, default is 1.')
-    @click.option('--post', default=50, help='Quantity of posts, default is 1.')
-    @click.option('--comment', default=500, help='Quantity of comments, default is 1.')
-    def forge(category, post, comment):
-        """Generate fake data."""
-        from bluelog.fakes import fake_admin, fake_categories, fake_posts, fake_comments, fake_links
-
-        db.drop_all()
-        db.create_all()
-
-        click.echo('Generating the administrator...')
-        fake_admin()
-
-        click.echo('Generating %d categories...' % category)
-        fake_categories(category)
-
-        click.echo('Generating %d posts...' % post)
-        fake_posts(post)
-
-        click.echo('Generating %d comments...' % comment)
-        fake_comments(comment)
-
-        click.echo('Generating links...')
-        fake_links()
-
         click.echo('Done.')
 
 
