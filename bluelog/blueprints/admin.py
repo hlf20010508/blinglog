@@ -268,7 +268,7 @@ def upload_image():
     if not allowed_file(f.filename):
         return jsonify({
             'success': False,
-            'error': 'Image only!'
+            'error': 'This image type is not allowed.'
         })
     now = datetime.now()  # 获得当前时间
     timestr = now.strftime("%Y_%m_%d_%H_%M_%S")
