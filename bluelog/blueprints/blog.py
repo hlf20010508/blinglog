@@ -7,7 +7,6 @@
 """
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response
 from flask_login import current_user
-
 from bluelog.emails import send_new_comment_email, send_new_reply_email
 from bluelog.extensions import db
 from bluelog.forms import CommentForm, AdminCommentForm
@@ -15,6 +14,7 @@ from bluelog.models import Post, Category, Comment, Admin
 from bluelog.utils import redirect_back
 import bluelog.OSS_minio as oss
 from markdown2 import markdown
+from sqlalchemy import or_
 
 blog_bp = Blueprint('blog', __name__)
 
@@ -137,11 +137,14 @@ def change_theme(theme_name):
 @blog_bp.route('/search')
 def search():
     content = request.args.get('content').strip()
-    if content == '':
-        flash('Enter something you want to search.', 'warning')
-        return redirect_back()
+    # if content == '':
+    #     flash('Enter something you want to search.', 'warning')
+    #     return redirect_back()
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_POST_PER_PAGE']
-    pagination = Post.query.filter(Post.body.like('%'+content+'%')).paginate(page, per_page)
+    post_query=Post.query.filter(or_(Post.body.like('%'+content+'%'), Post.title.like('%'+content+'%')))
+    comment_query=Post.query.join(Comment).filter(Comment.body.like('%'+content+'%'))
+    query=post_query.union(comment_query)
+    pagination = query.paginate(page, per_page)
     results = pagination.items
     return render_template('blog/index.html', pagination=pagination, posts=results)
