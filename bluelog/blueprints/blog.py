@@ -143,7 +143,7 @@ def search():
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_POST_PER_PAGE']
     post_query=Post.query.filter(or_(Post.body.like('%'+content+'%'), Post.title.like('%'+content+'%')))
-    comment_query=Post.query.join(Comment).filter(Comment.body.like('%'+content+'%'))
+    comment_query=Post.query.join(Comment).filter(or_(Comment.body.like('%'+content+'%'), Comment.author.like('%'+content+'%')))
     query=post_query.union(comment_query)
     pagination = query.paginate(page, per_page)
     results = pagination.items
