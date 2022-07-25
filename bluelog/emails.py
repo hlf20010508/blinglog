@@ -41,11 +41,11 @@ def get_time(timestamp):
     return timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def send_new_comment_email(post, comment):
-    post_url = url_for('blog.show_post', post_id=post.id,
-                       _external=True) + '#comments'
+def send_new_comment_email(comment):
+    post_url = url_for('blog.show_post', post_id=comment.post.id,
+                       _external=True) + '#comment-%s'%comment.id
     body = body_to_html(comment.body)
-    send_mail(subject='[New comment] %s' % post.title, to=current_app.config['BLUELOG_EMAIL'],
+    send_mail(subject='[New comment] %s' % comment.post.title, to=current_app.config['BLUELOG_EMAIL'],
               html='''
                     <p>
                         %s<small style="color: #868e96">&lt;%s&gt;&nbsp;%s</small>
@@ -62,7 +62,7 @@ def send_new_comment_email(post, comment):
 
 def send_new_reply_email(comment, reply):
     post_url = url_for('blog.show_post', post_id=comment.post_id,
-                       _external=True) + '#comments'
+                       _external=True) + '#comment-%s'%reply.id
     reply_body = body_to_html(reply.body)
     comment_body = body_to_html(comment.body)
     send_mail(subject='[New reply] %s' % comment.post.title, to=comment.email,

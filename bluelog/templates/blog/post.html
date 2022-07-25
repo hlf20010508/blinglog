@@ -58,7 +58,8 @@
                 <h3>{{ pagination.total }} Comments
                     <small>
                         <a href="{{ url_for('.show_post', post_id=post.id, page=pagination.pages or 1) }}#comments">
-                            latest</a>
+                            latest
+                        </a>
                     </small>
                     {% if current_user.is_authenticated %}
                         <form class="float-right" method="post"
@@ -73,7 +74,7 @@
                 {% if comments %}
                     <ul class="list-group">
                         {% for comment in comments %}
-                            <li class="list-group-item list-group-item-action flex-column">
+                            <li class="list-group-item list-group-item-action flex-column" id="comment-{{comment.id}}">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">
                                         <a href="{% if comment.site %}{{ comment.site }}{% else %}#{% endif %}"

@@ -144,14 +144,15 @@ def manage_comment():
     return render_template('admin/manage_comment.html', comments=comments, pagination=pagination)
 
 
-@admin_bp.route('/comment/<int:comment_id>/approve', methods=['POST'])
+@admin_bp.route('/comment/<int:comment_id>/check', methods=['POST'])
 @login_required
-def approve_comment(comment_id):
+def check_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
-    comment.reviewed = True
-    db.session.commit()
-    flash('Comment published.', 'success')
-    return redirect_back()
+    if not comment.reviewed:
+        comment.reviewed = True
+        db.session.commit()
+    return redirect('/post/%s#comment-%s'%(comment.post.id, comment_id))
+    
 
 
 @admin_bp.route('/comment/<int:comment_id>/delete', methods=['POST'])
