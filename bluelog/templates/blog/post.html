@@ -27,9 +27,11 @@
     </div>
     <div class="row">
         <div class="col-sm-8">
-            {{ post.body|safe }}
-            <script type="text/javascript" src="{{ url_for('static', filename='js/highlight.min.js') }}"></script>
-            <script>hljs.highlightAll();</script>
+            <div class="markdown-body">
+                {{ post.body|safe }}
+                <script type="text/javascript" src="{{ url_for('static', filename='js/highlight.min.js') }}"></script>
+                <script>hljs.highlightAll();</script>
+            </div>
             <hr>
             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".postLinkModal">Share
             </button>
@@ -96,7 +98,7 @@
                                         <br>{{ comment.replied.body|safe }}
                                     </div>
                                 {%- endif -%}
-                                <div class="mb-1">{{ comment.body|safe }}</div>
+                                <div class="mb-1 markdown-body">{{ comment.body|safe }}</div>
                                 <div class="float-right">
                                     <a class="btn btn-light btn-sm"
                                        href="{{ url_for('.reply_comment', comment_id=comment.id) }}">Reply</a>
