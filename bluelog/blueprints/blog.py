@@ -132,3 +132,16 @@ def change_theme(theme_name):
     response = make_response(redirect_back())
     response.set_cookie('theme', theme_name, max_age=30 * 24 * 60 * 60)
     return response
+
+
+@blog_bp.route('/search')
+def search():
+    content = request.args.get('content').strip()
+    if content == '':
+        flash('Enter something you want to search.', 'warning')
+        return redirect_back()
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['BLUELOG_POST_PER_PAGE']
+    pagination = Post.query.filter(Post.body.like('%'+content+'%')).paginate(page, per_page)
+    results = pagination.items
+    return render_template('blog/index.html', pagination=pagination, posts=results)

@@ -32,6 +32,14 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
+                    <li class="nav-item">
+                        <form class="inline" action="{{ url_for('blog.search') }}">
+                            <input type="text" name="content" required>
+                            <button type="submit">
+                                <span class="oi oi-magnifying-glass">search</span>
+                            </button>
+                        </form>
+                    </li>
                     {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
