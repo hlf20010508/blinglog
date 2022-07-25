@@ -1,0 +1,16 @@
+{
+    "orientation": "natural",
+    "display": "fullscreen",
+    "icons": [
+      {
+        "src": "/static/icon.png",
+        "sizes": "72x72 96x96 128x128 256x256 512*512 1024*1024"
+      }
+    ],
+    "name": "L-ING's Blog",
+    "short_name": "Bluelog",
+    "description": "A blog engine built with Flask.",
+    "start_url": "/",
+    "background_color": "#2780e3",
+    "theme_color": "#2780e3"
+  }
