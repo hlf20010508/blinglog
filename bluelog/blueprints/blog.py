@@ -48,7 +48,8 @@ def index():
 
 @blog_bp.route('/about')
 def about():
-    about = markdown(current_user.about, extras=[
+    admin = Admin.query.first()
+    about = markdown(admin.about, extras=[
         'fenced-code-blocks', 'highlightjs-lang', 'tables'])
     return render_template('blog/about.html', about=about)
 
