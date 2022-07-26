@@ -1,4 +1,5 @@
 config.json
+config.json.backup
 .DS_Store
 .vscode/
 # Byte-compiled / optimized / DLL files

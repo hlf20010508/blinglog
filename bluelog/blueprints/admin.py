@@ -10,11 +10,10 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, jsonify
 from flask_login import login_required, current_user
 
-from bluelog.extensions import db
+from bluelog.extensions import db, minio
 from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm
 from bluelog.models import Post, Category, Comment, Link
 from bluelog.utils import redirect_back, allowed_file
-import bluelog.OSS_minio as oss
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -106,7 +105,7 @@ def delete_post(post_id):
     if img_name != None:
         img_list = img_name.split(', ')
         for img in img_list:
-            oss.Client().remove(img)
+            minio.remove_object(current_app.config['MINIO_BUCKET'], img)
     return redirect_back()
 
 
@@ -273,7 +272,12 @@ def upload_image():
     now = datetime.now()  # 获得当前时间
     timestr = now.strftime("%Y_%m_%d_%H_%M_%S")
     f.filename = timestr+'.'+f.filename.split('.')[-1]
-    url = oss.Client().upload(f.filename, f)
+
+    minio.put_object(
+        current_app.config['MINIO_BUCKET'], f.filename, f, -1, part_size=5*1024*1024)
+    url = current_app.config['MINIO_PROTOCOL']+'://'+current_app.config['MINIO_HOST'] + ':' +  current_app.config['MINIO_PORT'] + \
+        '/'+current_app.config['MINIO_BUCKET']+'/'+f.filename
+
     return jsonify({
         'success': True,
         'url': url

@@ -8,11 +8,10 @@
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response
 from flask_login import current_user
 from bluelog.emails import send_new_comment_email, send_new_reply_email
-from bluelog.extensions import db
+from bluelog.extensions import db, minio
 from bluelog.forms import CommentForm, AdminCommentForm
 from bluelog.models import Post, Category, Comment, Admin
 from bluelog.utils import redirect_back
-import bluelog.OSS_minio as oss
 from markdown2 import markdown
 from sqlalchemy import or_
 
@@ -36,12 +35,12 @@ def index():
     img_name = ', '.join(img_list)  # 连接每条记录的所有图片名字符串
     img_list = img_name.split(', ')  # 拆分得到所有图片名单独的字符串
 
-    client = oss.Client()
-    img_all = client.list()
+    obj_list = minio.list_objects(current_app.config['MINIO_BUCKET'], recursive=True)
+    img_all  = [obj.object_name for obj in obj_list]
 
     for i in img_all:
         if i not in img_list:
-            client.remove(i)
+            minio.remove_object(current_app.config['MINIO_BUCKET'], i)
 
     return render_template('blog/index.html', pagination=pagination, posts=posts)
 

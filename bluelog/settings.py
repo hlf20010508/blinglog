@@ -6,48 +6,16 @@
     :license: MIT, see LICENSE for more details.
 """
 import os
-import sys
-import config as myconfig
-
-config = myconfig.load()
-
-minio_protocol = 'https' if config['secure_minio'] else 'http'
-minio_port = config['host_minio'].split(':')[1]
-minio_host = '%s://127.0.0.1:%s/%s' % (minio_protocol, minio_port, config['bucket']
-                                       ) if config['local_minio'] else minio_protocol+'://'+config['host_minio']+'/'+config['bucket']
-
-port = config['host_mysql'].split(':')[1]
-mysql_host = config['username_mysql']+':'+config['password_mysql']+'@'+'127.0.0.1:'+port+'/' + \
-    config['database'] if config['local_mysql'] else config['username_mysql'] + \
-    ':'+config['password_mysql']+'@' + \
-    config['host_mysql']+'/'+config['database']
-
-# SQLite URI compatible
-WIN = sys.platform.startswith('win')
-if WIN:
-    prefix = 'sqlite:///'
-else:
-    prefix = 'sqlite:////'
+import json
 
 
 class Config(object):
-    SECRET_KEY = os.getenv('SECRET_KEY', 'dev key')
+    SECRET_KEY = os.getenv('SECRET_KEY', 'dev key')  # 自定义csrf secret key
 
-    DEBUG_TB_INTERCEPT_REDIRECTS = False
+    DEBUG_TB_INTERCEPT_REDIRECTS = False  # 禁止flask debug toolbar拦截redirect
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://"+mysql_host
-
-    if config['email_setted']:
-        MAIL_SERVER = config['host_email']
-        MAIL_PORT = config['port_email']
-        MAIL_USE_SSL = config['ssl_email']
-        MAIL_USE_TLS = config['tls_email']
-        MAIL_USERNAME = config['address_email']
-        MAIL_PASSWORD = config['password_email']
-        MAIL_DEFAULT_SENDER = ('Bluelog Admin', MAIL_USERNAME)
-        BLUELOG_EMAIL = config['address_email']
 
     BLUELOG_POST_PER_PAGE = 10
     BLUELOG_MANAGE_POST_PER_PAGE = 15
@@ -55,6 +23,78 @@ class Config(object):
     # ('theme name', 'display name')
     BLUELOG_THEMES = {'perfect_blue': 'Perfect Blue',
                       'black_swan': 'Black Swan'}
-    BLUELOG_SLOW_QUERY_THRESHOLD = 1
-    BLUELOG_MINIO_PATH = minio_host
+    BLUELOG_SLOW_QUERY_THRESHOLD = 1  # sql 慢查询阀值
+
     BLUELOG_ALLOWED_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+
+    MINIO_PROTOCOL = None
+    MINIO_HOST = None
+    MINIO_BUCKET = None
+    BLUELOG_EMAIL = None
+    MAIL_SERVER = None
+    MAIL_USERNAME = None
+    MAIL_PASSWORD = None
+    SQLALCHEMY_DATABASE_URI = None
+
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': 10,
+        'max_overflow': 5,
+        'pool_timeout': 10,
+        'pool_recycle': 3600,
+    }
+
+    try:
+        with open('config.json', 'r') as config_file:
+            config = json.load(config_file)
+    except:
+        pass
+
+    try:
+        host_minio = config['host_minio']
+        port_minio = config['port_minio']
+        minio_protocol = config['protocol_minio']
+        local_minio = config['local_minio']
+        username_minio = config['username_minio']
+        password_minio = config['password_minio']
+        bucket_minio = config['bucket_minio']
+        endpoint_minio = '127.0.0.1:%s' % port_minio if local_minio else host_minio + ':' + port_minio
+        secure_minio = True if minio_protocol == 'https' else False
+
+        MINIO_PROTOCOL = minio_protocol
+        MINIO_HOST = host_minio
+        MINIO_PORT = port_minio
+        MINIO_ENDPOINT = endpoint_minio
+        MINIO_ACCESS_KEY = username_minio
+        MINIO_SECRET_KEY = password_minio
+        MINIO_SECURE = secure_minio
+        MINIO_BUCKET = bucket_minio
+    except:
+        print('\nconfiguration of minio not found.')
+        print('Run command: flask setoss\n')
+
+    try:
+        host_mysql = config['host_mysql']
+        port_mysql = config['port_mysql']
+        username_mysql = config['username_mysql']
+        password_mysql = config['password_mysql']
+        database_mysql = config['database_mysql']
+        endpoint_mysql = username_mysql + ':' + password_mysql + \
+            '@' + host_mysql + ':' + port_mysql + '/' + database_mysql
+
+        SQLALCHEMY_DATABASE_URI = "mysql+pymysql://"+endpoint_mysql
+    except:
+        print('\nconfiguration of mysql not found.')
+        print('Run command: flask setdb\n')
+
+    try:
+        MAIL_SERVER = config['host_email']
+        MAIL_PORT = config['port_email']
+        MAIL_USE_SSL = config['ssl_email']
+        MAIL_USE_TLS = config['tls_email']
+        MAIL_USERNAME = config['address_email']
+        MAIL_PASSWORD = config['password_email']
+        MAIL_DEFAULT_SENDER = ('Bluelog Admin', MAIL_USERNAME)
+        BLUELOG_EMAIL = config['receive_email']
+    except:
+        print('\nConfiguration of email not found.')
+        print('Run command: flask setemail\n')
