@@ -90,6 +90,7 @@ def show_post(post_id):
         email = form.email.data
         site = form.site.data
         body = form.body.data
+        total = request.form.get('total')
         comment = Comment(
             author=author, email=email, site=site, body=body,
             from_admin=from_admin, post=post, reviewed=reviewed)
@@ -103,8 +104,11 @@ def show_post(post_id):
         if not current_user.is_authenticated:  # send message based on authentication status
             # send notification email to admin
             send_new_comment_email(comment)
+        
         flash('Comment published.', 'success')
-        return redirect(url_for('.show_post', post_id=post_id))
+
+        page = int(total)//current_app.config['BLUELOG_COMMENT_PER_PAGE'] + 1
+        return redirect('/post/%s?page=%s#comment-%s'%(comment.post.id, page, comment.id))
 
     post.body = markdown(
         post.body, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])

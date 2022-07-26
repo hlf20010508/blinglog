@@ -59,11 +59,14 @@
                     <td>{{ comment.body }}</td>
                     <td>{{ moment(comment.timestamp).format('LL') }}</td>
                     <td>
+                        {% if not comment.reviewed %}
                         <form class="inline" method="post"
                                 action="{{ url_for('.check_comment', comment_id=comment.id, next=request.full_path) }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <button type="submit" class="btn btn-success btn-sm">Check</button>
+                            <button type="submit" class="btn btn-success btn-sm">Checked</button>
                         </form>
+                        {% endif %}
+                        <a class="btn btn-info btn-sm" href="{{ url_for('.details_comment', comment_id=comment.id) }}">Details</a>
                         <form class="inline" method="post"
                               action="{{ url_for('.delete_comment', comment_id=comment.id, next=request.full_path) }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
