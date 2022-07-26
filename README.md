@@ -44,7 +44,7 @@ pipenv run flask initblog
 pipenv run flask setemail
 
 # 更改mysql配置
-pipenv run flask setdb
+pipenv run flask changedb
 '''
 --host     [域名或IP地址]
 --port     [端口号]
@@ -54,7 +54,7 @@ pipenv run flask setdb
 '''
 
 # 更改minio配置
-pipenv run flask setoss
+pipenv run flask changeoss
 '''
 --host     [域名或IP地址]
 --port     [端口号]
