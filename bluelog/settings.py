@@ -16,7 +16,14 @@ class Config(object):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
-
+    SQLALCHEMY_SLOW_QUERY_THRESHOLD = 1  # sql 慢查询阀值
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': 10,
+        'max_overflow': 5,
+        'pool_timeout': 10,
+        'pool_recycle': 3600,
+    }
+    
     BLUELOG_POST_PER_PAGE = 10
     BLUELOG_MANAGE_POST_PER_PAGE = 15
     BLUELOG_COMMENT_PER_PAGE = 15
@@ -24,31 +31,28 @@ class Config(object):
     # ('theme name', 'display name')
     BLUELOG_THEMES = {'perfect_blue': 'Perfect Blue',
                       'black_swan': 'Black Swan'}
-    BLUELOG_SLOW_QUERY_THRESHOLD = 1  # sql 慢查询阀值
-
     BLUELOG_ALLOWED_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
-
-    MINIO_PROTOCOL = None
-    MINIO_HOST = None
-    MINIO_BUCKET = None
-    BLUELOG_EMAIL = None
-    MAIL_SERVER = None
-    MAIL_USERNAME = None
-    MAIL_PASSWORD = None
-    SQLALCHEMY_DATABASE_URI = None
-
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_size': 10,
-        'max_overflow': 5,
-        'pool_timeout': 10,
-        'pool_recycle': 3600,
-    }
 
     try:
         with open('config.json', 'r') as config_file:
             config = json.load(config_file)
     except:
         pass
+
+    try:
+        host_mysql = config['host_mysql']
+        port_mysql = config['port_mysql']
+        username_mysql = config['username_mysql']
+        password_mysql = config['password_mysql']
+        database_mysql = config['database_mysql']
+        endpoint_mysql = username_mysql + ':' + password_mysql + \
+            '@' + host_mysql + ':' + port_mysql + '/' + database_mysql
+
+        SQLALCHEMY_DATABASE_URI = "mysql+pymysql://"+endpoint_mysql
+    except:
+        SQLALCHEMY_DATABASE_URI = None
+        print('\nconfiguration of mysql not found.')
+        print('Run command: flask setdb\n')
 
     try:
         host_minio = config['host_minio']
@@ -70,23 +74,12 @@ class Config(object):
         MINIO_SECURE = secure_minio
         MINIO_BUCKET = bucket_minio
     except:
+        MINIO_PROTOCOL = None
+        MINIO_HOST = None
+        MINIO_BUCKET = None
         print('\nconfiguration of minio not found.')
         print('Run command: flask setoss\n')
-
-    try:
-        host_mysql = config['host_mysql']
-        port_mysql = config['port_mysql']
-        username_mysql = config['username_mysql']
-        password_mysql = config['password_mysql']
-        database_mysql = config['database_mysql']
-        endpoint_mysql = username_mysql + ':' + password_mysql + \
-            '@' + host_mysql + ':' + port_mysql + '/' + database_mysql
-
-        SQLALCHEMY_DATABASE_URI = "mysql+pymysql://"+endpoint_mysql
-    except:
-        print('\nconfiguration of mysql not found.')
-        print('Run command: flask setdb\n')
-
+        
     try:
         MAIL_SERVER = config['host_email']
         MAIL_PORT = config['port_email']
@@ -97,5 +90,9 @@ class Config(object):
         MAIL_DEFAULT_SENDER = ('Bluelog Admin', MAIL_USERNAME)
         BLUELOG_EMAIL = config['receive_email']
     except:
+        BLUELOG_EMAIL = None
+        MAIL_SERVER = None
+        MAIL_USERNAME = None
+        MAIL_PASSWORD = None
         print('\nConfiguration of email not found.')
         print('Run command: flask setemail\n')
