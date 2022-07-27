@@ -140,7 +140,7 @@
             {% endif %}
             {% if post.can_comment %}
                 <div id="comment-form" style="margin-bottom: 20px;">
-                    <form action="{{ request.full_path }}" method="post" class="form" role="form" novalidate>
+                    <form action="" method="post" class="form" role="form" novalidate>
                         <input type="text" name="total" value="{{ pagination.total }}" hidden>
                         {{ render_form(form) }}
                     </form>
