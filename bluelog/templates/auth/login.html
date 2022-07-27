@@ -9,7 +9,12 @@
             <h1>Log in</h1>
         </div>
         <div class="row h-100 justify-content-center align-items-center">
-            {{ render_form(form, extra_classes='col-6') }}
+            <style>
+                .login-min-width{
+                    min-width: 270px;
+                }
+            </style>
+            {{ render_form(form, extra_classes='col-6 login-min-width') }}
         </div>
     </div>
 {% endblock %}
