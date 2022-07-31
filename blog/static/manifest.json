@@ -8,7 +8,7 @@
       }
     ],
     "name": "L-ING's Blog",
-    "short_name": "Bluelog",
+    "short_name": "Blog",
     "description": "A blog engine built with Flask.",
     "start_url": "/",
     "background_color": "#2780e3",

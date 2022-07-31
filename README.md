@@ -1,4 +1,4 @@
-# bluelog
+# blinglog
 > A blog engine built with Flask.
 
 ## 声明

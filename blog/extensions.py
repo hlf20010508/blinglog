@@ -13,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_migrate import Migrate
-from bluelog.oss import Minio
+from blog.oss import Minio
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
@@ -28,7 +28,7 @@ minio = Minio()
 
 @login_manager.user_loader
 def load_user(user_id):
-    from bluelog.models import Admin
+    from blog.models import Admin
     user = Admin.query.get(int(user_id))
     return user
 

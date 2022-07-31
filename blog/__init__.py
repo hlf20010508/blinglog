@@ -13,12 +13,12 @@ from flask import Flask, render_template, request
 from flask_login import current_user
 from flask_sqlalchemy import get_debug_queries
 from flask_wtf.csrf import CSRFError
-from bluelog.settings import Config
-from bluelog.blueprints.admin import admin_bp
-from bluelog.blueprints.auth import auth_bp
-from bluelog.blueprints.blog import blog_bp
-from bluelog.extensions import bootstrap, db, login_manager, csrf, mail, moment, toolbar, migrate, minio
-from bluelog.models import Admin, Post, Category, Comment, Link
+from blog.settings import Config
+from blog.blueprints.admin import admin_bp
+from blog.blueprints.auth import auth_bp
+from blog.blueprints.blog import blog_bp
+from blog.extensions import bootstrap, db, login_manager, csrf, mail, moment, toolbar, migrate, minio
+from blog.models import Admin, Post, Category, Comment, Link
 import json
 from sqlalchemy_utils import database_exists, create_database
 
@@ -26,7 +26,7 @@ basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
 def create_app():
-    app = Flask('bluelog')
+    app = Flask('blog')
     app.debug = False
     app.config.from_object(Config)
 
@@ -57,7 +57,7 @@ def register_logging(app):
     formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    file_handler = RotatingFileHandler(os.path.join(basedir, 'logs/bluelog.log'),
+    file_handler = RotatingFileHandler(os.path.join(basedir, 'logs/blog.log'),
                                        maxBytes=10 * 1024 * 1024, backupCount=10)
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
@@ -66,7 +66,7 @@ def register_logging(app):
         mailhost=app.config['MAIL_SERVER'],
         fromaddr=app.config['MAIL_USERNAME'],
         toaddrs=['ADMIN_EMAIL'],
-        subject='Bluelog Application Error',
+        subject='Blog Application Error',
         credentials=(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD']))
     mail_handler.setLevel(logging.ERROR)
     mail_handler.setFormatter(request_formatter)
@@ -384,7 +384,7 @@ def register_commands(app):
             click.echo('Creating the temporary administrator account...')
             admin = Admin(
                 username=username,
-                blog_title='Bluelog',
+                blog_title='Blog',
                 blog_sub_title="No, I'm the real thing.",
                 name=username,
                 about='Anything about you.'
@@ -510,7 +510,7 @@ def register_commands(app):
             click.echo('Creating the temporary administrator account...')
             admin = Admin(
                 username=username_blog,
-                blog_title='Bluelog',
+                blog_title='Blog',
                 blog_sub_title="No, I'm the real thing.",
                 name=username_blog,
                 about='Anything about you.'
@@ -533,7 +533,7 @@ def register_commands(app):
     @click.option('--comment', default=500, help='Quantity of comments, default is 500.')
     def forge(category, post, comment):
         """Generate fake data."""
-        from bluelog.fakes import fake_admin, fake_categories, fake_posts, fake_comments, fake_links
+        from blog.fakes import fake_admin, fake_categories, fake_posts, fake_comments, fake_links
 
         engine = db.create_engine(
             app.config['SQLALCHEMY_DATABASE_URI'], app.config['SQLALCHEMY_ENGINE_OPTIONS'])

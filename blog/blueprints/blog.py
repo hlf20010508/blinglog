@@ -7,11 +7,11 @@
 """
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response
 from flask_login import current_user
-from bluelog.emails import send_new_comment_email, send_new_reply_email
-from bluelog.extensions import db, minio
-from bluelog.forms import CommentForm, AdminCommentForm
-from bluelog.models import Post, Category, Comment, Admin
-from bluelog.utils import redirect_back
+from blog.emails import send_new_comment_email, send_new_reply_email
+from blog.extensions import db, minio
+from blog.forms import CommentForm, AdminCommentForm
+from blog.models import Post, Category, Comment, Admin
+from blog.utils import redirect_back
 from markdown2 import markdown
 from sqlalchemy import or_
 
@@ -21,7 +21,7 @@ blog_bp = Blueprint('blog', __name__)
 @blog_bp.route('/')
 def index():
     page = request.args.get('page', 1, type=int)
-    per_page = current_app.config['BLUELOG_POST_PER_PAGE']
+    per_page = current_app.config['BLOG_POST_PER_PAGE']
     pagination = Post.query.order_by(
         Post.timestamp.desc()).paginate(page, per_page=per_page)
     posts = pagination.items
@@ -57,7 +57,7 @@ def about():
 def show_category(category_id):
     category = Category.query.get_or_404(category_id)
     page = request.args.get('page', 1, type=int)
-    per_page = current_app.config['BLUELOG_POST_PER_PAGE']
+    per_page = current_app.config['BLOG_POST_PER_PAGE']
     pagination = Post.query.with_parent(category).order_by(
         Post.timestamp.desc()).paginate(page, per_page)
     posts = pagination.items
@@ -68,7 +68,7 @@ def show_category(category_id):
 def show_post(post_id):
     post = Post.query.get_or_404(post_id)
     page = request.args.get('page', 1, type=int)
-    per_page = current_app.config['BLUELOG_COMMENT_PER_PAGE']
+    per_page = current_app.config['BLOG_COMMENT_PER_PAGE']
     pagination = Comment.query.with_parent(post).order_by(Comment.timestamp.asc()).paginate(
         page, per_page)
     comments = pagination.items
@@ -76,7 +76,7 @@ def show_post(post_id):
     if current_user.is_authenticated:
         form = AdminCommentForm()
         form.author.data = current_user.name
-        form.email.data = current_app.config['BLUELOG_EMAIL']
+        form.email.data = current_app.config['BLOG_EMAIL']
         form.site.data = url_for('.index')
         from_admin = True
         reviewed = True
@@ -107,7 +107,7 @@ def show_post(post_id):
         
         flash('Comment published.', 'success')
 
-        page = int(total)//current_app.config['BLUELOG_COMMENT_PER_PAGE'] + 1
+        page = int(total)//current_app.config['BLOG_COMMENT_PER_PAGE'] + 1
         return redirect('/post/%s?page=%s#comment-%s'%(comment.post.id, page, comment.id))
 
     post.body = markdown(
@@ -130,7 +130,7 @@ def reply_comment(comment_id):
 
 @blog_bp.route('/change-theme/<theme_name>')
 def change_theme(theme_name):
-    if theme_name not in current_app.config['BLUELOG_THEMES'].keys():
+    if theme_name not in current_app.config['BLOG_THEMES'].keys():
         abort(404)
 
     response = make_response(redirect_back())
@@ -145,10 +145,10 @@ def search():
     #     flash('Enter something you want to search.', 'warning')
     #     return redirect_back()
     page = request.args.get('page', 1, type=int)
-    per_page = current_app.config['BLUELOG_POST_PER_PAGE']
+    per_page = current_app.config['BLOG_POST_PER_PAGE']
     post_query=Post.query.filter(or_(Post.body.like('%'+content+'%'), Post.title.like('%'+content+'%')))
     comment_query=Post.query.join(Comment).filter(or_(Comment.body.like('%'+content+'%'), Comment.author.like('%'+content+'%')))
     query=post_query.union(comment_query)
-    pagination = query.paginate(page, per_page)
+    pagination = query.order_by(Post.timestamp.desc()).paginate(page, per_page)
     results = pagination.items
     return render_template('blog/index.html', pagination=pagination, posts=results)

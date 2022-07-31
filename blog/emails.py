@@ -8,7 +8,7 @@
 from threading import Thread
 from flask import url_for, current_app
 from flask_mail import Message
-from bluelog.extensions import mail
+from blog.extensions import mail
 from markdown2 import markdown
 from datetime import datetime
 import time
@@ -45,7 +45,7 @@ def send_new_comment_email(comment):
     post_url = url_for('blog.show_post', post_id=comment.post.id,
                        _external=True) + '#comment-%s'%comment.id
     body = body_to_html(comment.body)
-    send_mail(subject='[New comment] %s' % comment.post.title, to=current_app.config['BLUELOG_EMAIL'],
+    send_mail(subject='[New comment] %s' % comment.post.title, to=current_app.config['BLOG_EMAIL'],
               html='''
                     <p>
                         %s<small style="color: #868e96">&lt;%s&gt;&nbsp;%s</small>
@@ -71,7 +71,7 @@ def send_new_reply_email(comment, reply):
                         %s<small style="color: #868e96">&lt;%s&gt;&nbsp;%s</small>
                     </p>
                     %s
-                    <div style="color: #868e96; font-style: italic; margin: 14px 40px;">
+                    <div style="color: #868e96; font-style: italic; margin-top: 14px; margin-left: 40px;">
                         <p>
                             replied comment:
                         <p>

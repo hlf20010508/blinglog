@@ -10,8 +10,8 @@ import random
 from faker import Faker
 from sqlalchemy.exc import IntegrityError
 
-from bluelog.extensions import db
-from bluelog.models import Admin, Category, Post, Comment, Link
+from blog.extensions import db
+from blog.models import Admin, Category, Post, Comment, Link
 
 fake = Faker()
 
@@ -19,7 +19,7 @@ fake = Faker()
 def fake_admin():
     admin = Admin(
         username='admin',
-        blog_title='Bluelog',
+        blog_title='Blog',
         blog_sub_title="No, I'm the real thing.",
         name='Mima Kirigoe',
         about='Um, l, Mima Kirigoe, had a fun time as a member of CHAM...'

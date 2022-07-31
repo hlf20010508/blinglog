@@ -10,10 +10,10 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, jsonify
 from flask_login import login_required, current_user
 
-from bluelog.extensions import db, minio
-from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm
-from bluelog.models import Post, Category, Comment, Link
-from bluelog.utils import redirect_back, allowed_file
+from blog.extensions import db, minio
+from blog.forms import SettingForm, PostForm, CategoryForm, LinkForm
+from blog.models import Post, Category, Comment, Link
+from blog.utils import redirect_back, allowed_file
 from sqlalchemy import and_
 
 admin_bp = Blueprint('admin', __name__)
@@ -53,7 +53,7 @@ def settings():
 def manage_post():
     page = request.args.get('page', 1, type=int)
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page, per_page=current_app.config['BLUELOG_MANAGE_POST_PER_PAGE'])
+        page, per_page=current_app.config['BLOG_MANAGE_POST_PER_PAGE'])
     posts = pagination.items
     return render_template('admin/manage_post.html', page=page, pagination=pagination, posts=posts)
 
@@ -130,7 +130,7 @@ def manage_comment():
     # 'all', 'unreviewed', 'admin'
     filter_rule = request.args.get('filter', 'all')
     page = request.args.get('page', 1, type=int)
-    per_page = current_app.config['BLUELOG_MANAGE_COMMENT_PER_PAGE']
+    per_page = current_app.config['BLOG_MANAGE_COMMENT_PER_PAGE']
     if filter_rule == 'unread':
         filtered_comments = Comment.query.filter_by(reviewed=False)
     elif filter_rule == 'admin':
@@ -159,7 +159,7 @@ def check_post_comment(comment_id, total):
     comment = Comment.query.get_or_404(comment_id)
     comment.reviewed = True
     db.session.commit()
-    page = (total-1)//current_app.config['BLUELOG_COMMENT_PER_PAGE'] + 1
+    page = (total-1)//current_app.config['BLOG_COMMENT_PER_PAGE'] + 1
     if not total:
         page = 1
     return redirect('/post/%s?page=%s#comment-%s'%(comment.post.id, page, comment_id))
@@ -170,7 +170,7 @@ def check_post_comment(comment_id, total):
 def details_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     position = Comment.query.filter(and_(Comment.post_id == comment.post.id, Comment.id <= comment_id)).count()
-    page = (position-1)//current_app.config['BLUELOG_COMMENT_PER_PAGE'] + 1
+    page = (position-1)//current_app.config['BLOG_COMMENT_PER_PAGE'] + 1
     return redirect('/post/%s?page=%s#comment-%s'%(comment.post.id, page, comment_id))
     
 
@@ -199,7 +199,7 @@ def delete_post_comment(comment_id, total):
     if not last_comment:
         return redirect('/post/%s#comments'%post_id)
     position = Comment.query.filter(and_(Comment.post_id == post_id, Comment.id <= last_comment.id)).count() # 上一条记录为第几条记录
-    page = (position-1)//current_app.config['BLUELOG_COMMENT_PER_PAGE'] + 1
+    page = (position-1)//current_app.config['BLOG_COMMENT_PER_PAGE'] + 1
     return redirect('/post/%s?page=%s#comment-%s'%(post_id, page, last_comment.id))
 
 @admin_bp.route('/category/manage')

@@ -24,14 +24,14 @@ class Config(object):
         'pool_recycle': 3600,
     }
     
-    BLUELOG_POST_PER_PAGE = 10
-    BLUELOG_MANAGE_POST_PER_PAGE = 15
-    BLUELOG_COMMENT_PER_PAGE = 15
-    BLUELOG_MANAGE_COMMENT_PER_PAGE = 15
+    BLOG_POST_PER_PAGE = 10
+    BLOG_MANAGE_POST_PER_PAGE = 15
+    BLOG_COMMENT_PER_PAGE = 15
+    BLOG_MANAGE_COMMENT_PER_PAGE = 15
     # ('theme name', 'display name')
-    BLUELOG_THEMES = {'perfect_blue': 'Perfect Blue',
+    BLOG_THEMES = {'perfect_blue': 'Perfect Blue',
                       'black_swan': 'Black Swan'}
-    BLUELOG_ALLOWED_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+    BLOG_ALLOWED_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
     try:
         with open('config.json', 'r') as config_file:
@@ -87,10 +87,10 @@ class Config(object):
         MAIL_USE_TLS = config['tls_email']
         MAIL_USERNAME = config['address_email']
         MAIL_PASSWORD = config['password_email']
-        MAIL_DEFAULT_SENDER = ('Bluelog Admin', MAIL_USERNAME)
-        BLUELOG_EMAIL = config['receive_email']
+        MAIL_DEFAULT_SENDER = ('Blog Admin', MAIL_USERNAME)
+        BLOG_EMAIL = config['receive_email']
     except:
-        BLUELOG_EMAIL = None
+        BLOG_EMAIL = None
         MAIL_SERVER = None
         MAIL_USERNAME = None
         MAIL_PASSWORD = None
