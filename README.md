@@ -24,6 +24,8 @@ vim .env
 
 输入配置（例子）
 ```sh
+# 本机映射端口
+HOST_PORT=5000
 # mysql 服务器地址
 host_mysql=123.123.123.123
 # mysql 端口号
