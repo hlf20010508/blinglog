@@ -72,8 +72,6 @@ receive_email=user@icloud.com
 ```sh
 # 安装docker-compose
 pip install docker-compose
-# 更改.env中的配置
-vim .env
 # 部署
 docker-compose up -d
 ```
@@ -181,3 +179,6 @@ sudo systemctl stop blog@USERNAME
 # 取消开机自启
 sudo systemctl disable blog@USERNAME
 ```
+
+## 相关链接
+[Docker](https://hub.docker.com/repository/docker/hlf01/blinglog/general)
