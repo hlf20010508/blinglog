@@ -1,0 +1,11 @@
+version: '3'
+services:
+  blinglog:
+    container_name: blinglog
+    image: hlf01/blinglog
+    ports:
+      - 8080:8080
+    restart: on-failure
+    env_file:
+      - .env
+    command: pipenv run flask run -p 8080 -h 0.0.0.0

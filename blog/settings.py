@@ -37,7 +37,30 @@ class Config(object):
         with open('config.json', 'r') as config_file:
             config = json.load(config_file)
     except:
-        pass
+        try:
+            config = {
+                'host_mysql': os.environ['host_mysql'],
+                'port_mysql': os.environ['port_mysql'],
+                'username_mysql': os.environ['username_mysql'],
+                'password_mysql': os.environ['password_mysql'],
+                'database_mysql': os.environ['database_mysql'],
+                'host_minio': os.environ['host_minio'],
+                'port_minio': os.environ['port_minio'],
+                'protocol_minio': os.environ['protocol_minio'],
+                'local_minio': True if os.environ['local_minio']=='true' else False,
+                'username_minio': os.environ['username_minio'],
+                'password_minio': os.environ['password_minio'],
+                'bucket_minio': os.environ['bucket_minio'],
+                'host_email': os.environ.get('host_email', None),
+                'port_email': os.environ.get('port_email', None),
+                'ssl_email': True if os.environ.get('ssl_email', False)=='true' else False,
+                'tls_email': True if os.environ.get('tls_email', False)=='true' else False,
+                'address_email': os.environ.get('address_email', None),
+                'password_email': os.environ.get('password_email', None),
+                'receive_email': os.environ.get('receive_email', None),
+            }
+        except:
+            pass
 
     try:
         host_mysql = config['host_mysql']

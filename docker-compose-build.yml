@@ -1,0 +1,7 @@
+version: '3'
+services:
+  blinglog:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: hlf01/blinglog

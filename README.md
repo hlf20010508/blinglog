@@ -14,8 +14,74 @@
 - 适配WebApp
 - 优化邮件通知消息格式
 - 评论管理和邮件通知可以定位到目标评论
+- 可以使用docker部署
 
-## 安装
+## docker部署
+创建配置文件
+```sh
+vim .env
+```
+
+输入配置（例子）
+```sh
+# mysql 服务器地址
+host_mysql=123.123.123.123
+# mysql 端口号
+port_mysql=3306
+# mysql 用户名
+username_mysql=root
+# mysql 密码
+password_mysql=12345678
+# mysql 数据库名
+database_mysql=blog
+# minio 服务器地址
+host_minio=123.123.123.123
+# minio 端口号
+port_minio=9000
+# minio 使用的协议，为http或https
+protocol_minio=http
+# minio 是否在本地运行（若在本地运行，将使用127.0.0.1作为服务器地址）
+local_minio=false
+# minio 用户名
+username_minio=user
+# minio 密码
+password_minio=12345678
+# minio bucket名
+bucket_minio=blog
+
+# 通知邮箱设置（可省略）
+# smtp服务器地址
+host_email=smtp.mail.me.com
+# smtp服务器端口号
+port_email=587
+# 是否使用ssl
+ssl_email=false
+# 是否使用tls
+tls_email=true
+# smtp邮箱用户名
+address_email=user@icloud.com
+# smtp邮箱密码
+password_email=abcd-abcd-abcd-abcd
+# 通知收件邮箱地址
+receive_email=user@icloud.com
+```
+
+安装
+```sh
+# 安装docker-compose
+pip install docker-compose
+# 更改.env中的配置
+vim .env
+# 部署
+docker-compose up -d
+```
+
+## docker构建
+```sh
+docker-compose -f docker-compose-build.yml up
+```
+
+## 直接安装
 ```bash
 # 安装pipenv
 pip3 install pipenv

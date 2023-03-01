@@ -28,8 +28,8 @@ def index():
     for i in range(len(posts)):
         posts[i].body = markdown(posts[i].body)
 
-    post_with_img = Post.query.filter(Post.img_name).all()
-    admin_with_img = Admin.query.filter(Admin.img_name).all()
+    post_with_img = Post.query.filter(Post.img_name!=None).all()
+    admin_with_img = Admin.query.filter(Admin.img_name!=None).all()
     img_list = [p.img_name for p in post_with_img] + \
         [a.img_name for a in admin_with_img]
     img_name = ', '.join(img_list)  # 连接每条记录的所有图片名字符串
