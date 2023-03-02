@@ -1,5 +1,4 @@
 FROM python:3.8.16-alpine3.17
-EXPOSE 8080
 WORKDIR /blinglog
 COPY ./ ./
 RUN pip install --no-cache-dir pipenv &&\
