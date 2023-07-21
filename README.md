@@ -2,7 +2,7 @@
 > A blog engine built with Flask.
 
 ## 声明
-- 本项目基于greyli的[blulog](https://github.com/greyli/bluelog)
+- 本项目基于greyli的[bluelog](https://github.com/greyli/bluelog)
 
 ## 新功能
 - 使用minio作为对象存储
