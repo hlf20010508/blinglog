@@ -3,6 +3,4 @@ WORKDIR /blinglog
 COPY ./ ./
 RUN pip install --no-cache-dir pipenv &&\
     pipenv sync &&\
-    pipenv --clear &&\
-    mkdir logs &&\
-    touch blog.log
+    pipenv --clear

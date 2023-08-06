@@ -7,6 +7,11 @@ if os.path.exists(dotenv_path):
 
 from blog import create_app  # noqa
 
+if not os.path.exists('logs'):
+        os.mkdir('logs')
+        if not os.path.exists('logs/blog.log'):
+            open('logs/blog.log', 'w').close()
+            
 app = create_app()
 
 if __name__ == '__main__':
