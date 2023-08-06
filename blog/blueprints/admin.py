@@ -265,7 +265,8 @@ def new_link():
     if form.validate_on_submit():
         name = form.name.data
         url = form.url.data
-        link = Link(name=name, url=url)
+        is_navigator = form.url.is_navigator
+        link = Link(name=name, url=url, is_navigator=is_navigator)
         db.session.add(link)
         db.session.commit()
         flash('Link created.', 'success')
@@ -281,11 +282,13 @@ def edit_link(link_id):
     if form.validate_on_submit():
         link.name = form.name.data
         link.url = form.url.data
+        link.is_navigator = form.is_navigator.data
         db.session.commit()
         flash('Link updated.', 'success')
         return redirect(url_for('.manage_link'))
     form.name.data = link.name
     form.url.data = link.url
+    form.is_navigator.data = link.is_navigator
     return render_template('admin/edit_link.html', form=form)
 
 

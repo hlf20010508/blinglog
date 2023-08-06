@@ -83,3 +83,4 @@ class Link(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
     url = db.Column(db.String(255))
+    is_navigator = db.Column(db.Boolean, default=False)

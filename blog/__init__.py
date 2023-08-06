@@ -106,13 +106,15 @@ def register_template_context(app):
         admin = Admin.query.first()
         categories = Category.query.order_by(Category.name).all()
         links = Link.query.order_by(Link.name).all()
+        navigator = [link for link in links if link.is_navigator]
+        public_links = [link for link in links if not link.is_navigator]
         if current_user.is_authenticated:
             unread_comments = Comment.query.filter_by(reviewed=False).count()
         else:
             unread_comments = None
         return dict(
             admin=admin, categories=categories,
-            links=links, unread_comments=unread_comments)
+            links=links, navigator=navigator, public_links=public_links, unread_comments=unread_comments)
 
 
 def register_errors(app):

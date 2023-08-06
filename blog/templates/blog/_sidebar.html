@@ -1,8 +1,21 @@
-{% if links %}
+{% if navigator and current_user.is_authenticated %}
+    <div class="card mb-3">
+        <div class="card-header">Navigator</div>
+        <ul class="list-group list-group-flush">
+            {% for link in navigator %}
+                <li class="list-group-item  list-group-item-action d-flex justify-content-between align-items-center">
+                    <a href="{{ link.url }}" target="_blank">{{ link.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% if public_links %}
     <div class="card mb-3">
         <div class="card-header">Links</div>
         <ul class="list-group list-group-flush">
-            {% for link in links %}
+            {% for link in public_links %}
                 <li class="list-group-item  list-group-item-action d-flex justify-content-between align-items-center">
                     <a href="{{ link.url }}" target="_blank">{{ link.name }}</a>
                 </li>
