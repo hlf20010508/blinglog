@@ -8,11 +8,11 @@
         <h1>Settings</h1>
     </div>
     {{ render_form(form, novalidate=True) }}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.config.js') }}"></script>
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
-    <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.config.js') }}"></script>
 {% endblock %}

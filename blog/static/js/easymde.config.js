@@ -51,5 +51,8 @@ const easyMDE = new EasyMDE({
         'side-by-side',
         'fullscreen',
 
-    ]
+    ],
+    renderingConfig: {
+        codeSyntaxHighlighting: true
+    }
 });

@@ -1,7 +1,7 @@
 let date = new Date()
 let year = date.getFullYear()
-let element = document.getElementsByClassName('year')[0]
-element.textContent = year
+let yearElement = document.getElementsByClassName('year')[0]
+yearElement.textContent = year
 // let host = location.protocol + '//' + document.domain + ':' + location.port
 // element = document.getElementsByClassName('indexLink')[0]
 //     element.setAttribute('target', '_blank')

@@ -48,9 +48,7 @@ def index():
 @blog_bp.route('/about')
 def about():
     admin = Admin.query.first()
-    about = markdown(admin.about, extras=[
-        'fenced-code-blocks', 'highlightjs-lang', 'tables'])
-    return render_template('blog/about.html', about=about)
+    return render_template('blog/about.html', about=admin.about)
 
 
 @blog_bp.route('/category/<int:category_id>')
@@ -109,12 +107,6 @@ def show_post(post_id):
 
         page = int(total)//current_app.config['BLOG_COMMENT_PER_PAGE'] + 1
         return redirect('/post/%s?page=%s#comment-%s'%(comment.post.id, page, comment.id))
-
-    post.body = markdown(
-        post.body, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
-    for comment in comments:
-        comment.body = markdown(
-            comment.body, extras=['fenced-code-blocks', 'highlightjs-lang', 'tables'])
     return render_template('blog/post.html', post=post, pagination=pagination, form=form, comments=comments)
 
 

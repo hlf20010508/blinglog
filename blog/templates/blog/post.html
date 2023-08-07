@@ -27,11 +27,8 @@
     </div>
     <div class="row">
         <div class="col-sm-8">
-            <div class="markdown-body">
-                {{ post.body|safe }}
-                <script type="text/javascript" src="{{ url_for('static', filename='js/highlight.min.js') }}"></script>
-                <script>hljs.highlightAll();</script>
-            </div>
+            <div id="raw-content-hidden" style="display: none;">{{ post.body|safe }}</div>
+            <div class="markdown-body" id="raw-content"></div>
             <hr>
             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".postLinkModal">Share
             </button>
@@ -145,9 +142,6 @@
                         {{ render_form(form) }}
                     </form>
                 </div>
-                <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.min.js') }}"></script>
-                <script type="text/javascript" src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
-                <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.config.js') }}"></script>
             {% else %}
                 <div class="tip"><h5>Comment disabled.</h5></div>
             {% endif %}
@@ -156,4 +150,8 @@
             {% include "blog/_sidebar.html" %}
         </div>
     </div>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/easymde.config.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/renderPost.js') }}"></script>
 {% endblock %}
