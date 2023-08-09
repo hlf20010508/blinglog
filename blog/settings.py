@@ -40,14 +40,10 @@ class Config(object):
         try:
             config = {
                 'host_mysql': os.environ['host_mysql'],
-                'port_mysql': os.environ['port_mysql'],
                 'username_mysql': os.environ['username_mysql'],
                 'password_mysql': os.environ['password_mysql'],
                 'database_mysql': os.environ['database_mysql'],
                 'host_minio': os.environ['host_minio'],
-                'port_minio': os.environ['port_minio'],
-                'protocol_minio': os.environ['protocol_minio'],
-                'local_minio': True if os.environ['local_minio']=='true' else False,
                 'username_minio': os.environ['username_minio'],
                 'password_minio': os.environ['password_minio'],
                 'bucket_minio': os.environ['bucket_minio'],
@@ -64,12 +60,11 @@ class Config(object):
 
     try:
         host_mysql = config['host_mysql']
-        port_mysql = config['port_mysql']
         username_mysql = config['username_mysql']
         password_mysql = config['password_mysql']
         database_mysql = config['database_mysql']
         endpoint_mysql = username_mysql + ':' + password_mysql + \
-            '@' + host_mysql + ':' + port_mysql + '/' + database_mysql
+            '@' + host_mysql + '/' + database_mysql
 
         SQLALCHEMY_DATABASE_URI = "mysql+pymysql://"+endpoint_mysql
     except:
@@ -79,25 +74,19 @@ class Config(object):
 
     try:
         host_minio = config['host_minio']
-        port_minio = config['port_minio']
-        minio_protocol = config['protocol_minio']
-        local_minio = config['local_minio']
         username_minio = config['username_minio']
         password_minio = config['password_minio']
         bucket_minio = config['bucket_minio']
-        endpoint_minio = '127.0.0.1:%s' % port_minio if local_minio else host_minio + ':' + port_minio
-        secure_minio = True if minio_protocol == 'https' else False
+        endpoint_minio = host_minio.split('://')[1]
+        secure_minio = True if host_minio.split('://')[0] == 'https' else False
 
-        MINIO_PROTOCOL = minio_protocol
         MINIO_HOST = host_minio
-        MINIO_PORT = port_minio
         MINIO_ENDPOINT = endpoint_minio
         MINIO_ACCESS_KEY = username_minio
         MINIO_SECRET_KEY = password_minio
         MINIO_SECURE = secure_minio
         MINIO_BUCKET = bucket_minio
     except:
-        MINIO_PROTOCOL = None
         MINIO_HOST = None
         MINIO_BUCKET = None
         print('\nconfiguration of minio not found.')

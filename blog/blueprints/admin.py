@@ -316,8 +316,7 @@ def upload_image():
 
     minio.put_object(
         current_app.config['MINIO_BUCKET'], f.filename, f, -1, part_size=5*1024*1024)
-    url = current_app.config['MINIO_PROTOCOL']+'://'+current_app.config['MINIO_HOST'] + ':' +  current_app.config['MINIO_PORT'] + \
-        '/'+current_app.config['MINIO_BUCKET']+'/'+f.filename
+    url = current_app.config['MINIO_HOST'] + '/'+current_app.config['MINIO_BUCKET']+'/'+f.filename
 
     return jsonify({
         'success': True,

@@ -18,6 +18,10 @@
 - 支持私有导航
 
 ## docker部署
+### 若未初始化过Mysql和MinIO，需要先初始化
+先前往 [直接运行](#direct_launch) 参考初始化命令来进行初始化
+
+### 若已初始化过MySql和MinIO，调试时可以直接使用.env文件导入环境
 创建配置文件
 ```sh
 vim .env
@@ -26,9 +30,7 @@ vim .env
 输入配置（例子）
 ```sh
 # mysql 服务器地址
-host_mysql=123.123.123.123
-# mysql 端口号
-port_mysql=3306
+host_mysql=123.123.123.123:3306
 # mysql 用户名
 username_mysql=root
 # mysql 密码
@@ -36,13 +38,7 @@ password_mysql=12345678
 # mysql 数据库名
 database_mysql=blog
 # minio 服务器地址
-host_minio=123.123.123.123
-# minio 端口号
-port_minio=9000
-# minio 使用的协议，为http或https
-protocol_minio=http
-# minio 是否在本地运行（若在本地运行，将使用127.0.0.1作为服务器地址）
-local_minio=false
+host_minio=https://123.123.123.123:9000
 # minio 用户名
 username_minio=user
 # minio 密码
@@ -80,7 +76,8 @@ docker-compose up -d
 docker-compose -f docker-compose-build.yml up
 ```
 
-## 直接安装
+<span id="direct_launch"></span>
+## 直接运行
 ```bash
 # 安装pipenv
 pip3 install pipenv
@@ -88,7 +85,7 @@ pip3 install pipenv
 # 安装环境
 pipenv sync
 
-# 初始化配置文件
+# 初始化配置
 # minio和mysql都会自动初始化，且不会覆盖已有的数据
 pipenv run flask init
 
@@ -112,7 +109,6 @@ pipenv run flask setemail
 pipenv run flask changedb
 '''
 --host     [域名或IP地址]
---port     [端口号]
 --username [用户名]
 --password [密码]
 --database [数据库]
@@ -122,9 +118,6 @@ pipenv run flask changedb
 pipenv run flask changeoss
 '''
 --host     [域名或IP地址]
---port     [端口号]
---protocol [协议 http/https]
---local    [与博客同服务器 y/n]
 --username [用户名]
 --password [密码]
 --bucket   [桶]

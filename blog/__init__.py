@@ -199,12 +199,11 @@ def register_commands(app):
             pass
 
     @app.cli.command()
-    @click.option('--host', prompt='The host name or IP address of mysql server (eg: example.com)', help='The host name or IP address of mysql server (eg: example.com).')
-    @click.option('--port', prompt='The port of mysql server (eg: 3306)', help='The port of mysql server (eg: 3306).')
+    @click.option('--host', prompt='The host name or IP address of mysql server (eg: example.com:3306)', help='The host name or IP address of mysql server (eg: example.com:3306).')
     @click.option('--username', prompt='The username of mysql server', help='The username of mysql server.')
     @click.option('--password', prompt='The password of mysql server', help='The password of mysql server.')
     @click.option('--database', prompt='The database name of mysql server', help='The database name of mysql server.')
-    def setdb(host, port, username, password, database):
+    def setdb(host, username, password, database):
         """Set up configuration for mysql"""
         try:
             with open('config.json', 'r') as config_file:
@@ -213,7 +212,6 @@ def register_commands(app):
             config = {}
 
         config['host_mysql'] = host
-        config['port_mysql'] = port
         config['username_mysql'] = username
         config['password_mysql'] = password
         config['database_mysql'] = database
@@ -225,20 +223,17 @@ def register_commands(app):
         click.echo('Run command to initialize: flask initdb')
 
     @app.cli.command()
-    @click.option('--host', help='The host name or IP address of mysql server (eg: example.com).')
-    @click.option('--port', help='The port of mysql server (eg: 3306).')
+    @click.option('--host', help='The host name or IP address of mysql server (eg: example.com:3306).')
     @click.option('--username', help='The username of mysql server.')
     @click.option('--password', help='The password of mysql server.')
     @click.option('--database', help='The database name of mysql server.')
-    def changedb(host, port, username, password, database):
+    def changedb(host, username, password, database):
         """Change configuration of mysql"""
         try:
             with open('config.json', 'r') as config_file:
                 config = json.load(config_file)
             if host:
                 config['host_mysql'] = host
-            if port:
-                config['port_mysql'] = port
             if username:
                 config['username_mysql'] = username
             if password:
@@ -252,14 +247,11 @@ def register_commands(app):
             pass
 
     @app.cli.command()
-    @click.option('--host', prompt='The host name or IP address of minio server (eg: example.com)', help='The host name or IP address of minio server (eg: example.com).')
-    @click.option('--port', prompt='The port of minio server (eg: 9000)', help='The port of minio server (eg: 9000).')
-    @click.option('--protocol', prompt='The protocol type of minio server', type=click.Choice(['http', 'https']), help='The protocol type of minio server (http https).')
-    @click.option('--local', prompt='Is minio on the same server with blog? y/n', type=click.BOOL, help='Whether minio is on the same server with blog.')
+    @click.option('--host', prompt='The host name or IP address of minio server (eg: https://example.com:9000)', help='The host name or IP address of minio server (eg: https://example.com:9000).')
     @click.option('--username', prompt='The username of minio server', help='The username of minio server.')
     @click.option('--password', prompt='The password of minio server', help='The password of minio server.')
     @click.option('--bucket', prompt='The bucket name', help='The bucket name.')
-    def setoss(host, port, protocol, local, username, password, bucket):
+    def setoss(host, username, password, bucket):
         """Set up configuration for minio"""
         try:
             with open('config.json', 'r') as config_file:
@@ -268,9 +260,6 @@ def register_commands(app):
             config = {}
 
         config['host_minio'] = host
-        config['port_minio'] = port
-        config['protocol_minio'] = protocol
-        config['local_minio'] = local
         config['username_minio'] = username
         config['password_minio'] = password
         config['bucket_minio'] = bucket
@@ -282,14 +271,11 @@ def register_commands(app):
         click.echo('Run command to initialize: flask initoss')
 
     @app.cli.command()
-    @click.option('--host', help='The host name or IP address of minio server (eg: example.com).')
-    @click.option('--port', help='The port of minio server (eg: 9000).')
-    @click.option('--protocol', type=click.Choice(['http', 'https']), help='The protocol type of minio server (http https).')
-    @click.option('--local', type=click.BOOL, help='Whether minio is on the same server with blog.')
+    @click.option('--host', help='The host name or IP address of minio server (eg: https://example.com:9000).')
     @click.option('--username', help='The username of minio server.')
     @click.option('--password', help='The password of minio server.')
     @click.option('--bucket', help='The bucket name.')
-    def changeoss(host, port, protocol, local, username, password, bucket):
+    def changeoss(host, protocol, username, password, bucket):
         """Change configuration of minio"""
         try:
             with open('config.json', 'r') as config_file:
@@ -297,12 +283,6 @@ def register_commands(app):
 
             if host:
                 config['host_minio'] = host
-            if port:
-                config['port_minio'] = port
-            if protocol:
-                config['protocol_minio'] = protocol
-            if local:
-                config['local_minio'] = local
             if username:
                 config['username_minio'] = username
             if password:
@@ -406,15 +386,11 @@ def register_commands(app):
     @app.cli.command()
     @click.option('--username-blog', prompt='The usename of blog', help='The usename of blog.')
     @click.option('--password-blog', prompt='The password of blog', help='The password of blog.')
-    @click.option('--host-mysql', prompt='The host name or IP address of mysql server (eg: example.com)', help='The host name or IP address of mysql server (eg: example.com).')
-    @click.option('--port-mysql', prompt='The port of mysql server (eg: 3306)', help='The port of mysql server (eg: 3306).')
+    @click.option('--host-mysql', prompt='The host name or IP address of mysql server (eg: example.com:3306)', help='The host name or IP address of mysql server (eg: example.com:3306).')
     @click.option('--username-mysql', prompt='The username of mysql server', help='The username of mysql server.')
     @click.option('--password-mysql', prompt='The password of mysql server', help='The password of mysql server.')
     @click.option('--database-mysql', prompt='The database name of mysql server', help='The database name of mysql server.')
-    @click.option('--host-minio', prompt='The host name or IP address of minio server (eg: example.com)', help='The host name or IP address of minio server (eg: example.com).')
-    @click.option('--port-minio', prompt='The port of minio server (eg: 9000)', help='The port of minio server (eg: 9000).')
-    @click.option('--protocol-minio', prompt='The protocol type of minio server', type=click.Choice(['http', 'https']), help='The protocol type of minio server (http https).')
-    @click.option('--local-minio', prompt='Is minio on the same server with blog? y/n', type=click.BOOL, help='Whether minio is on the same server with blog.')
+    @click.option('--host-minio', prompt='The host name or IP address of minio server (eg: https://example.com:9000)', help='The host name or IP address of minio server (eg: https://example.com:9000).')
     @click.option('--username-minio', prompt='The username of minio server', help='The username of minio server.')
     @click.option('--password-minio', prompt='The password of minio server', help='The password of minio server.')
     @click.option('--bucket-minio', prompt='The bucket name', help='The bucket name.')
@@ -425,20 +401,16 @@ def register_commands(app):
     @click.option('--address-email', prompt='The email address on smtp server', help='The email address on smtp server.')
     @click.option('--password-email', prompt='The password of smtp email server', help='The password of smtp email server.')
     @click.option('--receive-email', prompt='The email address to receive notification', help='The email address to receive notification.')
-    def init(username_blog, password_blog, host_mysql, port_mysql, username_mysql, password_mysql, database_mysql,
-                host_minio, port_minio, protocol_minio, local_minio, username_minio, password_minio, bucket_minio,
+    def init(username_blog, password_blog, host_mysql, username_mysql, password_mysql, database_mysql,
+                host_minio, username_minio, password_minio, bucket_minio,
                 host_email, port_email, ssl_email, tls_email, address_email, password_email, receive_email):
         """Initialize all"""
         config = {
             'host_mysql': host_mysql,
-            'port_mysql': port_mysql,
             'username_mysql': username_mysql,
             'password_mysql': password_mysql,
             'database_mysql': database_mysql,
             'host_minio': host_minio,
-            'port_minio': port_minio,
-            'protocol_minio': protocol_minio,
-            'local_minio': local_minio,
             'username_minio': username_minio,
             'password_minio': password_minio,
             'bucket_minio': bucket_minio,
