@@ -265,7 +265,7 @@ def new_link():
     if form.validate_on_submit():
         name = form.name.data
         url = form.url.data
-        is_navigator = form.url.is_navigator
+        is_navigator = form.is_navigator.data
         link = Link(name=name, url=url, is_navigator=is_navigator)
         db.session.add(link)
         db.session.commit()
