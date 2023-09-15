@@ -3,6 +3,6 @@
 
 let contentDiv = document.getElementById("raw-content")
 let contentDivHidden = document.getElementById("raw-content-hidden")
-let rawContent = contentDivHidden.innerHTML
+let rawContent = contentDivHidden.textContent
 let htmlContent = easyMDE.markdown(rawContent)
 contentDiv.innerHTML = htmlContent
