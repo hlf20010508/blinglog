@@ -49,3 +49,7 @@ footer {
 code {
     color: black;
 }
+
+.cm-tab {
+    width: 12px;
+}

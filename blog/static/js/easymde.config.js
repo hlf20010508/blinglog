@@ -49,8 +49,7 @@ const easyMDE = new EasyMDE({
         "|",
         'preview',
         'side-by-side',
-        'fullscreen',
-
+        'fullscreen'
     ],
     renderingConfig: {
         codeSyntaxHighlighting: true
