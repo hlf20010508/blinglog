@@ -9,10 +9,9 @@ import re
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, jsonify
 from flask_login import login_required, current_user
-
 from blog.extensions import db, minio
 from blog.forms import SettingForm, PostForm, CategoryForm, LinkForm
-from blog.models import Post, Category, Comment, Link
+from blog.models import Post, Category, Comment, Link, Admin
 from blog.utils import redirect_back, allowed_file
 from sqlalchemy import and_
 
@@ -322,3 +321,25 @@ def upload_image():
         'success': True,
         'url': url
     })
+
+
+# 删除无用图片
+@admin_bp.route('/clean')
+def clean():
+    post_with_img = Post.query.filter(Post.img_name!=None).all()
+    admin_with_img = Admin.query.filter(Admin.img_name!=None).all()
+    img_list = [p.img_name for p in post_with_img] + \
+        [a.img_name for a in admin_with_img]
+    img_name = ', '.join(img_list)  # 连接每条记录的所有图片名字符串
+    img_list = img_name.split(', ')  # 拆分得到所有图片名单独的字符串
+
+    obj_list = minio.list_objects(current_app.config['MINIO_BUCKET'], recursive=True)
+    img_all  = [obj.object_name for obj in obj_list]
+
+    for i in img_all:
+        if i not in img_list:
+            minio.remove_object(current_app.config['MINIO_BUCKET'], i)
+
+    flash('Unused images cleaned.', 'success')
+
+    return redirect(url_for('blog.index'))

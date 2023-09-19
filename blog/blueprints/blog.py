@@ -5,17 +5,15 @@
     :copyright: © 2018 Grey Li <withlihui@gmail.com>
     :license: MIT, see LICENSE for more details.
 """
-from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response, jsonify
+from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, abort, make_response
 from flask_login import current_user
 from blog.emails import send_new_comment_email, send_new_reply_email
-from blog.extensions import db, minio
+from blog.extensions import db
 from blog.forms import CommentForm, AdminCommentForm
 from blog.models import Post, Category, Comment, Admin
 from blog.utils import redirect_back
 from markdown2 import markdown
 from sqlalchemy import or_
-import urllib3
-import json
 
 blog_bp = Blueprint('blog', __name__)
 
@@ -29,21 +27,6 @@ def index():
     posts = pagination.items
     for i in range(len(posts)):
         posts[i].body = markdown(posts[i].body)
-
-    post_with_img = Post.query.filter(Post.img_name!=None).all()
-    admin_with_img = Admin.query.filter(Admin.img_name!=None).all()
-    img_list = [p.img_name for p in post_with_img] + \
-        [a.img_name for a in admin_with_img]
-    img_name = ', '.join(img_list)  # 连接每条记录的所有图片名字符串
-    img_list = img_name.split(', ')  # 拆分得到所有图片名单独的字符串
-
-    obj_list = minio.list_objects(current_app.config['MINIO_BUCKET'], recursive=True)
-    img_all  = [obj.object_name for obj in obj_list]
-
-    for i in img_all:
-        if i not in img_list:
-            minio.remove_object(current_app.config['MINIO_BUCKET'], i)
-
     return render_template('blog/index.html', pagination=pagination, posts=posts)
 
 
