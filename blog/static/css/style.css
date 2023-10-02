@@ -53,3 +53,8 @@ code {
 .cm-tab {
     width: 12px;
 }
+
+/* iPadOS上使用实体键盘时光标靠近下边缘会出现输入法上移的问题，原因是textarea中的文本自动换行 */
+.CodeMirror.cm-s-easymde.CodeMirror-wrap div textarea {
+    white-space: nowrap;
+}
