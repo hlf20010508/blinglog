@@ -58,3 +58,7 @@ code {
 .CodeMirror.cm-s-easymde.CodeMirror-wrap div textarea {
     white-space: nowrap;
 }
+
+.editor-toolbar button {
+    width: 30px;
+}
