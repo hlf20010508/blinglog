@@ -53,5 +53,6 @@ const easyMDE = new EasyMDE({
     ],
     renderingConfig: {
         codeSyntaxHighlighting: true
-    }
+    },
+    spellChecker: false,
 });
