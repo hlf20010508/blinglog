@@ -92,8 +92,8 @@
                                     </small>
                                 </div>
                                 {% if comment.replied %}
-                                    <div class="raw-content-hidden comment-replied-hidden" style="display: none;">{{ comment.replied.author + '&lt;' + comment.replied.email + '&gt; ' + comment.replied.timestamp.strftime('%Y-%m-%d %H:%M:%S') + '\n' + comment.replied.body|safe }}</div>
-                                    <div class="markdown-body alert alert-dark reply-body markdown-content" style="margin: 10px 0;">
+                                    <div class="raw-content-hidden comment-replied-hidden" style="display: none;">{{ comment.replied.author + comment.replied.timestamp.strftime(' %Y-%m-%d %H:%M:%S') + '\n' + comment.replied.body|safe }}</div>
+                                    <div class="markdown-body markdown-content" style="cursor: pointer;" onclick="location.href = '#comment-{{ comment.replied.id }}'">
                                     </div>
                                 {%- endif -%}
                                 <div class="raw-content-hidden" style="display: none;">{{ comment.body|safe }}</div>

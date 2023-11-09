@@ -39,6 +39,9 @@ $(() => {
         let code_area = contentDivElement.find("pre")
         code_area.wrap('<div class="code-div" style="position: relative"></div>')
         for (let j = 0; j < code_div.length; j++) {
+            if (code_div[j].parentElement.tagName.toLowerCase() === "blockquote") {
+                continue; // 如果处在 blockquote 中，跳过此元素
+            }
             let copy_icon = document.createElement("div")
             copy_icon.innerHTML = copy_icon_svg
             copy_icon.style.position = "absolute"
@@ -68,8 +71,8 @@ $(() => {
         }
     }
 
+    // 当发送评论验证失败时聚焦
     var invalidFeedbackElements = document.querySelectorAll(".invalid-feedback");
-
     if (invalidFeedbackElements.length > 0) {
         var targetAnchor = document.querySelector('#comment-form');
         if (targetAnchor) {
