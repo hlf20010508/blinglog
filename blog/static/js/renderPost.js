@@ -10,45 +10,61 @@ let copy_success_svg = `
 </svg>`
 
 $(() => {
+    // 为评论回复增加引用
+    let commentRepliedHidden = $(".comment-replied-hidden")
+    for (let i = 0; i < commentRepliedHidden.length; i++) {
+        let commentRepliedContent = commentRepliedHidden[i].textContent
+        let commentRepliedLines = commentRepliedContent.split('\n')
+        for (let line = 0; line < commentRepliedLines.length; line++) {
+            commentRepliedLines[line] = '> ' + commentRepliedLines[line]
+        }
+        commentRepliedHidden[i].textContent = commentRepliedLines.join('\n')
+    }
+
     // 在服务器直接渲染会造成与预览时不一致的问题
     // 为保证与预览的渲染结果一致，直接在前端调用编辑器进行渲染
-    let contentDiv = $("#markdown-content")
-    let contentDivHidden = $("#raw-content-hidden")
-    let rawContent = contentDivHidden.text()
-    let htmlContent = easyMDE.markdown(rawContent)
-    contentDiv.html(htmlContent)
+    let contentDiv = $(".markdown-content")
+    let contentDivHidden = $(".raw-content-hidden")
+    for (let i = 0; i < contentDiv.length; i++) {
+        let rawContent = contentDivHidden[i].textContent
+        let htmlContent = easyMDE.markdown(rawContent)
+        contentDiv[i].innerHTML = htmlContent
+    }
 
     // 为代码段增加复制按钮
-    let code_area = contentDiv.find("pre")
-    code_area.wrap('<div class="code-div" style="position: relative"></div>')
-    contentDiv = document.getElementById("markdown-content")
-    let code_div = contentDiv.getElementsByClassName("code-div")
-    for (let i = 0; i < code_div.length; i++) {
-        let copy_icon = document.createElement("div")
-        copy_icon.innerHTML = copy_icon_svg
-        copy_icon.style.position = "absolute"
-        copy_icon.style.right = "0"
-        copy_icon.style.top = "0"
-        copy_icon.style.border = "1px solid"
-        copy_icon.style.borderRadius = "6px"
-        copy_icon.style.fontSize = "14px"
-        copy_icon.style.lineHeight = "20px"
-        copy_icon.style.margin = "8px"
-        copy_icon.style.width = "32px"
-        copy_icon.style.height = "34px"
-        copy_icon.style.borderColor = "rgba(31,35,40,0.15)"
-        code_div[i].appendChild(copy_icon)
-        copy_icon.addEventListener("mouseover", () => {
-            copy_icon.style.cursor = "pointer"
-        })
-        copy_icon.addEventListener("click", () => {
-            let code_text = code_area[i].textContent
-            navigator.clipboard.writeText(code_text).then(() => {
-                copy_icon.innerHTML = copy_success_svg
-                setTimeout(() => {
-                    copy_icon.innerHTML = copy_icon_svg
-                }, 2000)
+    let contentDivRawJS = document.getElementsByClassName("markdown-content")
+    for (let i = 0; i < contentDivRawJS.length; i++) {
+        let code_div = contentDivRawJS[i].getElementsByClassName("code-div")
+        let contentDivElement = contentDiv.eq(i);
+        let code_area = contentDivElement.find("pre")
+        code_area.wrap('<div class="code-div" style="position: relative"></div>')
+        for (let j = 0; j < code_div.length; j++) {
+            let copy_icon = document.createElement("div")
+            copy_icon.innerHTML = copy_icon_svg
+            copy_icon.style.position = "absolute"
+            copy_icon.style.right = "0"
+            copy_icon.style.top = "0"
+            copy_icon.style.border = "1px solid"
+            copy_icon.style.borderRadius = "6px"
+            copy_icon.style.fontSize = "14px"
+            copy_icon.style.lineHeight = "20px"
+            copy_icon.style.margin = "8px"
+            copy_icon.style.width = "32px"
+            copy_icon.style.height = "34px"
+            copy_icon.style.borderColor = "rgba(31,35,40,0.15)"
+            code_div[j].appendChild(copy_icon)
+            copy_icon.addEventListener("mouseover", () => {
+                copy_icon.style.cursor = "pointer"
             })
-        })
+            copy_icon.addEventListener("click", () => {
+                let code_text = code_area[j].textContent
+                navigator.clipboard.writeText(code_text).then(() => {
+                    copy_icon.innerHTML = copy_success_svg
+                    setTimeout(() => {
+                        copy_icon.innerHTML = copy_icon_svg
+                    }, 2000)
+                })
+            })
+        }
     }
 })

@@ -27,8 +27,8 @@
     </div>
     <div class="row">
         <div class="col-sm-8">
-            <div id="raw-content-hidden" style="display: none;">{{ post.body|safe }}</div>
-            <div class="markdown-body" id="markdown-content"></div>
+            <div class="raw-content-hidden" style="display: none;">{{ post.body|safe }}</div>
+            <div class="markdown-body markdown-content"></div>
             <hr>
             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".postLinkModal">Share
             </button>
@@ -71,7 +71,7 @@
                 {% if comments %}
                     <ul class="list-group">
                         {% for comment in comments %}
-                            <li class="list-group-item list-group-item-action flex-column" id="comment-{{comment.id}}">
+                            <li class="list-group-item flex-column" id="comment-{{comment.id}}" style="margin: 10px 0;">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">
                                         <a href="{% if comment.site %}{{ comment.site }}{% else %}#{% endif %}"
@@ -92,11 +92,12 @@
                                     </small>
                                 </div>
                                 {% if comment.replied %}
-                                    <div class="alert alert-dark reply-body" style="color: #868e96; font-style: italic">{{ comment.replied.author }}:
-                                        <br>{{ comment.replied.body|safe }}
+                                    <div class="raw-content-hidden comment-replied-hidden" style="display: none;">{{ comment.replied.author + '&lt;' + comment.replied.email + '&gt; ' + comment.replied.timestamp.strftime('%Y-%m-%d %H:%M:%S') + '\n' + comment.replied.body|safe }}</div>
+                                    <div class="markdown-body alert alert-dark reply-body markdown-content" style="margin: 10px 0;">
                                     </div>
                                 {%- endif -%}
-                                <div class="mb-1 markdown-body">{{ comment.body|safe }}</div>
+                                <div class="raw-content-hidden" style="display: none;">{{ comment.body|safe }}</div>
+                                <div class="mb-1 markdown-body markdown-content"></div>
                                 <div class="float-right">
                                     {% if current_user.is_authenticated %}
                                     {% if not comment.reviewed %}
