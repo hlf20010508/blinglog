@@ -88,9 +88,14 @@
         {% block footer %}
         <footer>
             <p class="float-left">
-                <small> &copy; <span class="year"></span> <span>L-ING</span> -
-                    <a href="https://github.com/hlf20010508" target="_blank">Github</a> -
-                    <a href="https://www.zhihu.com/people/huang-ling-feng-7-16" target="_blank">Zhihu</a>
+                <small>
+                    &copy;
+                    <span id="foot-year"></span>
+                    <span>{{ admin.name }}</span>
+                    {% for link in public_links %}
+                        -
+                        <a href="{{ link.url }}" target="_blank">{{ link.name }}</a>
+                    {% endfor %}
                 </small>
             </p>
             <p class="float-right">
