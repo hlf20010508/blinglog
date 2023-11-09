@@ -123,8 +123,8 @@ def search():
     #     return redirect_back()
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLOG_POST_PER_PAGE']
-    post_query=Post.query.filter(or_(Post.body.like('%'+content+'%'), Post.title.like('%'+content+'%')))
-    comment_query=Post.query.join(Comment).filter(or_(Comment.body.like('%'+content+'%'), Comment.author.like('%'+content+'%')))
+    post_query=Post.query.filter(or_(Post.title.like('%'+content+'%'), Post.body.like('%'+content+'%')))
+    comment_query=Post.query.join(Comment).filter(or_(Comment.author.like('%'+content+'%'), Comment.body.like('%'+content+'%')))
     query=post_query.union(comment_query)
     pagination = query.order_by(Post.timestamp.desc()).paginate(page, per_page)
     results = pagination.items
