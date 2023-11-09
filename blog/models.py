@@ -44,7 +44,7 @@ class Category(db.Model):
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text)
+    title = db.Column(db.Text, index=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     can_comment = db.Column(db.Boolean, default=True)
@@ -58,7 +58,7 @@ class Post(db.Model):
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    author = db.Column(db.String(30))
+    author = db.Column(db.String(30), index=True)
     email = db.Column(db.String(254))
     site = db.Column(db.String(255))
     body = db.Column(db.Text)
