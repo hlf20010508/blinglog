@@ -67,4 +67,13 @@ $(() => {
             })
         }
     }
+
+    var invalidFeedbackElements = document.querySelectorAll(".invalid-feedback");
+
+    if (invalidFeedbackElements.length > 0) {
+        var targetAnchor = document.querySelector('#comment-form');
+        if (targetAnchor) {
+            targetAnchor.scrollIntoView({ behavior: 'smooth' }); // 使用平滑滚动效果
+        }
+    }
 })
