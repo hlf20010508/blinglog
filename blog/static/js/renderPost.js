@@ -60,7 +60,7 @@ $(() => {
                 copy_icon.style.cursor = "pointer"
             })
             copy_icon.addEventListener("click", () => {
-                let code_text = code_area[j].textContent
+                let code_text = code_area[j].textContent.trim()
                 navigator.clipboard.writeText(code_text).then(() => {
                     copy_icon.innerHTML = copy_success_svg
                     setTimeout(() => {
