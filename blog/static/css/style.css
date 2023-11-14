@@ -62,3 +62,11 @@ code {
 .editor-toolbar button {
     width: 30px;
 }
+
+.editor-preview-full {
+    padding: 10px;
+}
+
+.editor-preview-side {
+    padding: 10px;
+}
