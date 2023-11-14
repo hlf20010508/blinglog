@@ -55,4 +55,5 @@ const easyMDE = new EasyMDE({
         codeSyntaxHighlighting: true
     },
     spellChecker: false,
+    previewClass: "markdown-body",
 });
